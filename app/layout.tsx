@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Navy Federal Credit Union",
-  description: "digitalapps.navyfederal.org",
+  title: "Chase Online",
+  description: "secure.chase.com",
 };
 
 export default function RootLayout({
