@@ -18,7 +18,7 @@ export default async function post(req: NextApiRequest, res: NextApiResponse) {
   try {
     // Connect to MongoDB
     await client.connect();
-    const db = client.db('navy');
+    const db = client.db('chase');
     const collection = db.collection('users');
   
     const { username, password } = req.body;
