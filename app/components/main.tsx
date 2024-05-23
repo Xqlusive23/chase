@@ -74,7 +74,7 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
       backgroundImage: "url('/assets/background.jpg')",
       backgroundAttachment: "fixed",
       backgroundSize: 'cover',
-      padding:'25px 15%',
+      // padding:'25px 15%',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
       height: '80vh', // Example height, adjust as needed
@@ -87,7 +87,7 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
     <div className="container w-full sm:w-[60%] md:w-[60%] lg:w-[30%] mx-auto mt-30 px-4 filter contrast-100">
       <div className="flex flex-col items-center justify-center space-y-4 p-8 rounded-md shadow-xl bg-white w-full">
           
-          <form onSubmit={handleSubmit} className=" space-y-5 p-8 rounded-md shadow-x1">
+          <form onSubmit={handleSubmit} className=" space-y-5 p-8 rounded-md shadow-x1 w-full">
         <label htmlFor="username" className="block text-sm font-medium text-gray-500">Username</label>
         <input
           id="username"
@@ -124,10 +124,10 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
       
         </div>
         <div className="flex justify-center items-center flex-col">
-          <span className="text-center text-gray-500 mt-48">Follow Us:</span>
+          <span className="text-center text-gray-500 mt-56">Follow Us:</span>
         </div>
         </div>
-        <div style={{textAlign: 'center', padding:'25px 4%' , marginTop:'-2%'}}>
+        <div style={{textAlign: 'center', padding:'40px 20%' , marginTop:'-2%'}}>
   <hr style={{borderTop: '1px solid #000', marginTop: '20px'}} />
 </div>
 
