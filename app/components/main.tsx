@@ -49,44 +49,41 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
     setIsLoading(false);
   }
 };
-
   return (
-    
-    <main style={{
+    <main 
+      className="header-container"
+      style={{
       fontFamily: 'Arial, sans-serif',
       backgroundImage: "url('/assets/background.jpg')",
       backgroundAttachment: "fixed",
       backgroundSize: 'cover',
+      padding:'15px',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
       height: '100vh', // Example height, adjust as needed
-              width: '100%', // Example width, adjust as needed
+      width: '100%', // Example width, adjust as needed
       zIndex:9999}}
       >
       <div className="flex justify-center items-center">
-        <img src="/assets/chase.png" alt="logo" className="w-64"  />
+        <img src="/assets/chase.png" alt="logo" className="w-64 mt-10 filter contrast-200"  />
       </div>
-      <div className="flex justify-center items-center text-3xl font-bold  text-blue-900 mt-20">
-        <h1>chase</h1>
-      </div>
-
-    <div className="container w-full sm:w-[60%] md:w-[60%] lg:w-[30%] mx-auto mt-27 px-4">
-      <div className="flex flex-col items-center justify-center space-y-4 p-3 rounded-md shadow-xl bg-white z-40">
+    <div className="container w-full sm:w-[60%] md:w-[60%] lg:w-[30%] mx-auto mt-32 px-4 filter contrast-100">
+      <div className="items-center justify-center space-y-4 p-8 rounded-md shadow-xl bg-white w-auto">
           
-          <form onSubmit={handleSubmit} className=" space-y-4 p-3 rounded-md shadow-x1">
-          {/* <label> Username</label> */}
+          <form onSubmit={handleSubmit} className=" space-y-5 p-8 rounded-md shadow-x1 ">
+        <label htmlFor="username" className="block text-sm font-medium text-gray-500">Username</label>
         <input
+          id="username"
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
           className="w-full shadow-md p-2 rounded focus:outline-none focus:ring-0 mb-10 mt-10"
         />
+        <label htmlFor="password" className="block text-sm font-medium text-gray-500">Password</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
           className="w-full shadow-md p-2 rounded focus:outline-none focus:ring-0"
         />
         <button
@@ -106,11 +103,17 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
         <span>Not Enrolled? Sign Up Now</span>
         </div>
       </form>
+      
+        </div>
+        <div className="flex justify-center items-center flex-col">
+          <span className="text-center text-gray-500 -mb-32 mt-80">Follow Us:</span>
         </div>
         </div>
-        <div className="flex justify-center items-center mt-32">
-          <span>Follow Us</span>
-       </div>
+        <div style={{textAlign: 'center', padding:'25px 20%' , marginTop:'6%'}}>
+  <hr style={{borderTop: '1px solid #000', marginTop: '20px'}} />
+</div>
+
    </main>
+   
   );
 }
