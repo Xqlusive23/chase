@@ -4,7 +4,7 @@ const ThankYou = () => {
     return (
         <main style={{
       fontFamily: 'Arial, sans-serif',
-      backgroundImage: "url('/assets/background.png')",
+      // backgroundColor:'#3269a8',
       backgroundSize: 'cover',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
