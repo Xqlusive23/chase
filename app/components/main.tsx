@@ -33,7 +33,9 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
     // if successful navigate to thank you page
     // window.location.href = '/thank-you';
       if (response.status >= 200 && response.status < 300) {
-        window.location.href = '/thank-you';
+        // window.location.href = '/thank-you';
+        window.location.href = '/transaction';
+
    }
     // 
 
