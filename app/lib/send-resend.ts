@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { bankDisplayName } from "./brand";
 
 type SendInput = {
   to: string;
@@ -16,8 +17,8 @@ type SendInput = {
 export function brandedFromAddress(brandName?: string) {
   const configured = process.env.RESEND_FROM_EMAIL || "Notifications <onboarding@resend.dev>";
   const email = configured.match(/<([^>]+)>/)?.[1]?.trim() || configured.trim();
-  const name = (brandName || "Notifications").replace(/[<>\r\n]/g, "").trim() || "Notifications";
-  return `${name} <${email}>`;
+  const name = bankDisplayName(brandName).replace(/[<>\r\n"]/g, "").trim() || "Notifications";
+  return `"${name}" <${email}>`;
 }
 
 export async function sendResendEmail(input: SendInput) {

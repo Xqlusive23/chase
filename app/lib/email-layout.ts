@@ -8,16 +8,15 @@ function escapeHtml(value: string) {
 
 export function emailHeader(eyebrow: string, brandName: string, brandNameCid?: string) {
   const brand = escapeHtml(brandName);
-  const mark = brandNameCid
-    ? `<img src="cid:${brandNameCid}" alt="${brand}" width="180" style="display:block;border:0;max-width:70%;width:180px;height:auto;margin:0 0 10px;" />`
-    : "";
+  const title = brandNameCid
+    ? `<img src="cid:${brandNameCid}" alt="${brand}" width="200" style="display:block;border:0;max-width:80%;width:200px;height:auto;margin:10px 0 0;" />`
+    : `<h1 style="margin:10px 0 0;font-size:24px;line-height:1.2;color:#ffffff;font-weight:700;">${brand}</h1>`;
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#e7f1fb">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#002e6d">
       <tr>
-        <td bgcolor="#e7f1fb" style="background-color:#e7f1fb;padding:22px 20px;text-align:left;">
-          <p style="margin:0;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#0b5cab;font-weight:700;">${escapeHtml(eyebrow)}</p>
-          ${mark}
-          <h1 style="margin:0;font-size:22px;line-height:1.25;color:#002e6d;font-weight:700;">${brand}</h1>
+        <td bgcolor="#002e6d" style="background-color:#002e6d;padding:22px 20px;text-align:left;">
+          <p style="margin:0;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;opacity:0.75;">${escapeHtml(eyebrow)}</p>
+          ${title}
         </td>
       </tr>
     </table>

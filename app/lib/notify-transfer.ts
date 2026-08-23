@@ -1,4 +1,4 @@
-import { readBrand } from "./brand";
+import { bankDisplayName, readBrand } from "./brand";
 import { statusLabel } from "./activity";
 import { prepareBrandHeaderImage, publicBankLogoUrl } from "./email-images";
 import { formatMoneyUsd } from "./format";
@@ -79,13 +79,13 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
   if (!notice) return;
   try {
     const brand = readBrand();
-    const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage, 360, "navy");
+    const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage, 360, "white");
     const response = await fetch("/api/notify-transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...notice,
-        brandName: notice.brandName || brand.name,
+        brandName: bankDisplayName(notice.brandName || brand.name),
         brandNameImage,
         brandLogo: notice.brandLogo || brand.logo,
         bankName: notice.bankName,
