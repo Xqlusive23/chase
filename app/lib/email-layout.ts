@@ -1,7 +1,6 @@
 export const EMAIL_NAVY = "#002e6d";
 export const EMAIL_BLUE = "#0b5cab";
 export const EMAIL_ASH = "#b0b4b8";
-export const EMAIL_DEEP_ASH = "#3f4348";
 
 function escapeHtml(value: string) {
   return value

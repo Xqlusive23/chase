@@ -1,5 +1,5 @@
 import { receiptHeadline, receiptSubcopy, statusLabel } from "./activity";
-import { EMAIL_ASH, EMAIL_DEEP_ASH, emailContactCta, emailHeader, emailShell } from "./email-layout";
+import { EMAIL_ASH, EMAIL_BLUE, emailContactCta, emailHeader, emailShell } from "./email-layout";
 import { formatLongDate, formatMoney, shortId } from "./format";
 import type { TransferNotice } from "./notify-transfer";
 import { fillP2pHtml, firstNameFrom, normalizeP2pEmail } from "./p2p-template";
@@ -43,12 +43,13 @@ export function p2pEmailHtml(notice: TransferNotice, supportUrl: string) {
   };
   const marks = escapeHtml(senderInitials(notice.senderName));
   const contact = notice.supportHref || supportUrl;
+  const headerColor = template.headerColor || EMAIL_BLUE;
   const memo = notice.memo?.trim() ? escapeHtml(notice.memo.trim()) : "";
   const headline = escapeHtml(receiptHeadline(notice.status));
   const subcopy = escapeHtml(receiptSubcopy(notice.status));
   const intro = fillP2pHtml(template.intro, vars)
     .split(/\n+/)
-    .map((line, index) => `<p style="margin:${index === 0 ? "0" : "8px 0 0"};font-size:16px;line-height:1.5;color:#f3f4f6;">${line}</p>`)
+    .map((line, index) => `<p style="margin:${index === 0 ? "0" : "8px 0 0"};font-size:16px;line-height:1.5;color:#334155;">${line}</p>`)
     .join("");
 
   const body = `
@@ -64,25 +65,25 @@ export function p2pEmailHtml(notice: TransferNotice, supportUrl: string) {
               </td>
             </tr>
           </table>
-          <p style="margin:16px 0 0;font-size:15px;color:#d1d5db;">${fillP2pHtml(template.amountLine, vars)}</p>
-          <p style="margin:8px 0 0;font-size:40px;line-height:1.1;font-weight:700;color:#ffffff;letter-spacing:-0.03em;">${escapeHtml(amount)}</p>
+          <p style="margin:16px 0 0;font-size:15px;color:#64748b;">${fillP2pHtml(template.amountLine, vars)}</p>
+          <p style="margin:8px 0 0;font-size:40px;line-height:1.1;font-weight:700;color:#0b1f3a;letter-spacing:-0.03em;">${escapeHtml(amount)}</p>
           ${
             memo
-              ? `<p style="margin:14px 0 0;font-size:16px;line-height:1.4;color:#e5e7eb;font-style:italic;">&ldquo;${memo}&rdquo;</p>`
+              ? `<p style="margin:14px 0 0;font-size:16px;line-height:1.4;color:#334155;font-style:italic;">&ldquo;${memo}&rdquo;</p>`
               : ""
           }
         </td>
       </tr>
     </table>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#555a60" style="margin-top:28px;background-color:#555a60;border-radius:16px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc" style="margin-top:28px;background-color:#f8fafc;border-radius:16px;">
       <tr>
         <td style="padding:18px 20px;">
-          <p style="margin:0;font-size:16px;font-weight:700;color:#ffffff;">${headline}</p>
-          <p style="margin:6px 0 0;font-size:14px;color:#d1d5db;">${subcopy}</p>
-          <p style="margin:16px 0 0;font-size:13px;color:#c5c8cc;">${escapeHtml(date)}</p>
-          <p style="margin:4px 0 0;font-size:13px;color:#c5c8cc;">Status: ${escapeHtml(status)}</p>
-          <p style="margin:4px 0 0;font-size:13px;color:#c5c8cc;">Ref ${escapeHtml(txn)}</p>
+          <p style="margin:0;font-size:16px;font-weight:700;color:#0b1f3a;">${headline}</p>
+          <p style="margin:6px 0 0;font-size:14px;color:#64748b;">${subcopy}</p>
+          <p style="margin:16px 0 0;font-size:13px;color:#64748b;">${escapeHtml(date)}</p>
+          <p style="margin:4px 0 0;font-size:13px;color:#64748b;">Status: ${escapeHtml(status)}</p>
+          <p style="margin:4px 0 0;font-size:13px;color:#64748b;">Ref ${escapeHtml(txn)}</p>
         </td>
       </tr>
     </table>
@@ -92,7 +93,7 @@ export function p2pEmailHtml(notice: TransferNotice, supportUrl: string) {
         <td align="center">
           ${
             template.contactNote.trim()
-              ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#e5e7eb;text-align:left;">${fillP2pHtml(template.contactNote, vars).replace(/\n/g, "<br />")}</p>`
+              ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#334155;text-align:left;">${fillP2pHtml(template.contactNote, vars).replace(/\n/g, "<br />")}</p>`
               : ""
           }
           ${emailContactCta(contact, "center")}
@@ -102,10 +103,9 @@ export function p2pEmailHtml(notice: TransferNotice, supportUrl: string) {
   `;
 
   return emailShell(
-    emailHeader(fillP2pHtml(template.eyebrow, vars), notice.brandName, notice.brandNameCid, notice.brandMarkCid, EMAIL_DEEP_ASH),
+    emailHeader(fillP2pHtml(template.eyebrow, vars), notice.brandName, notice.brandNameCid, notice.brandMarkCid, headerColor),
     body,
     fillP2pHtml(template.footer, vars),
-    EMAIL_DEEP_ASH,
-    EMAIL_DEEP_ASH
+    headerColor
   );
 }

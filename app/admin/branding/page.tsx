@@ -5,7 +5,6 @@ import { useBrand } from "../../components/BrandProvider";
 import { useStoreSync } from "../../components/StoreProvider";
 import { DEFAULT_BRAND, brandMark } from "../../lib/brand";
 import { shrinkDataImage } from "../../lib/email-images";
-import { EMAIL_DEEP_ASH } from "../../lib/email-layout";
 import { DEFAULT_P2P_EMAIL, P2P_PLACEHOLDERS, normalizeP2pEmail, p2pTemplateBlocked } from "../../lib/p2p-template";
 import { pushStore } from "../../lib/sync";
 
@@ -194,7 +193,7 @@ export default function AdminBrandingPage() {
               className="hidden"
               onChange={(event) => readFile(event.target.files?.[0], (value) => setP2pEmail({ ...p2pEmail, nameImage: value }))}
             />
-            <div className="mt-3 rounded-lg px-4 py-3 text-center" style={{ backgroundColor: EMAIL_DEEP_ASH }}>
+            <div className="mt-3 rounded-lg px-4 py-3 text-center" style={{ backgroundColor: p2pEmail.headerColor }}>
               {p2pEmail.nameImage || nameImage ? (
                 <img
                   src={p2pEmail.nameImage || nameImage}
