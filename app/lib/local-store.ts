@@ -18,7 +18,7 @@ export function collectLocalStore(): AppStore {
     }
   }
   return {
-    updatedAt: Number(localStorage.getItem(UPDATED_KEY) || Date.now()),
+    updatedAt: Number(localStorage.getItem(UPDATED_KEY) || 0),
     brand: readBrand(),
     users: readStoredUsers(),
     banks,

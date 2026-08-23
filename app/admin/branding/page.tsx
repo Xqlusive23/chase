@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useBrand } from "../../components/BrandProvider";
 import { useStoreSync } from "../../components/StoreProvider";
 import { DEFAULT_BRAND, brandMark } from "../../lib/brand";
+import { shrinkDataImage } from "../../lib/email-images";
+import { pushStore } from "../../lib/sync";
 
 export default function AdminBrandingPage() {
   const { brand, setBrand } = useBrand();
@@ -15,6 +17,8 @@ export default function AdminBrandingPage() {
   const [nameImage, setNameImage] = useState(brand.nameImage);
   const [nameImageScale, setNameImageScale] = useState(brand.nameImageScale || 56);
   const [saved, setSaved] = useState("");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setName(brand.name);
@@ -26,27 +30,46 @@ export default function AdminBrandingPage() {
   function readFile(file: File | undefined, setter: (value: string) => void) {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setter(String(reader.result ?? ""));
+    reader.onload = () => {
+      void shrinkDataImage(String(reader.result ?? ""), 720).then(setter);
+    };
     reader.readAsDataURL(file);
   }
 
-  function handleSave(event: FormEvent) {
+  async function handleSave(event: FormEvent) {
     event.preventDefault();
+    setError("");
+    setSaved("");
+    setSaving(true);
     setBrand({
       name: name.trim() || DEFAULT_BRAND.name,
       logo,
       nameImage,
       nameImageScale,
     });
-    setSaved("Branding saved. The name and name image now update everywhere they appear.");
+    const result = await pushStore();
+    setSaving(false);
+    if (!result.ok) {
+      setError(result.error || "Saved on this browser only. Add Vercel KV to share the name image with other browsers.");
+      return;
+    }
+    setSaved("Branding saved for every browser. Open the site on another device and refresh.");
   }
 
-  function handleReset() {
+  async function handleReset() {
     setName(DEFAULT_BRAND.name);
     setLogo("");
     setNameImage("");
     setNameImageScale(DEFAULT_BRAND.nameImageScale);
     setBrand(DEFAULT_BRAND);
+    setError("");
+    setSaving(true);
+    const result = await pushStore();
+    setSaving(false);
+    if (!result.ok) {
+      setError(result.error || "Reset on this browser only.");
+      return;
+    }
     setSaved("Reset to the default identity.");
   }
 
@@ -157,12 +180,15 @@ export default function AdminBrandingPage() {
         </div>
         {synced === false && (
           <p className="text-sm text-amber-800">
-            This save stays on this device until Vercel KV is added. After that, branding and members sync to every device.
+            Other browsers will not see this name image until you add Vercel KV (Storage → KV) and redeploy.
           </p>
         )}
+        {error && <p className="text-sm text-red-700">{error}</p>}
         {saved && <p className="text-sm text-[var(--blue)]">{saved}</p>}
         <div className="flex flex-wrap gap-2">
-          <button className="btn-primary">Save branding</button>
+          <button disabled={saving} className="btn-primary">
+            {saving ? "Saving…" : "Save branding"}
+          </button>
           <button type="button" onClick={handleReset} className="btn-secondary">
             Reset default
           </button>

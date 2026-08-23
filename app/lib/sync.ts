@@ -17,7 +17,7 @@ export function schedulePush() {
   }, 400);
 }
 
-async function pushStore() {
+export async function pushStore() {
   try {
     const { collectLocalStore } = await import("./local-store");
     const store = { ...collectLocalStore(), updatedAt: Date.now() };
@@ -30,11 +30,14 @@ async function pushStore() {
     const payload = (await response.json().catch(() => null)) as { configured?: boolean; error?: string } | null;
     configured = Boolean(payload?.configured && response.ok);
     if (!response.ok) {
-      console.error("Shared store save failed:", payload?.error || response.statusText);
+      const error = payload?.error || response.statusText;
+      console.error("Shared store save failed:", error);
+      return { ok: false, configured: Boolean(payload?.configured), error };
     }
+    return { ok: true, configured: true };
   } catch (error) {
     configured = false;
-    console.error("Shared store save failed:", error);
+    return { ok: false, configured: false, error: error instanceof Error ? error.message : "Could not save the shared store." };
   }
 }
 
@@ -47,9 +50,11 @@ export async function hydrateStore() {
     const { applyLocalStore, collectLocalStore } = await import("./local-store");
     const remote = payload.store;
     const local = collectLocalStore();
+    const localStamp = Number(localStorage.getItem("chise_store_updated_at") || 0);
+    const remoteHasBrand = Boolean(remote?.brand?.nameImage || remote?.brand?.logo || (remote?.brand?.name && remote.brand.name !== "Chise Bank"));
     const localCustomized = Boolean(local.brand.logo || local.brand.nameImage || local.users.length > 1 || Object.keys(local.banks).length);
 
-    if (remote?.updatedAt && (!local.updatedAt || remote.updatedAt >= local.updatedAt || !localCustomized)) {
+    if (remote && (remoteHasBrand || (remote.updatedAt && remote.updatedAt >= localStamp) || !localCustomized)) {
       quietWrites = true;
       applyLocalStore(remote);
       quietWrites = false;
