@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BrandText } from "../../components/BrandText";
 
 const TOOLS = [
+  { href: "/send", title: "Pay a person", body: "Send money to someone with their name and email." },
   { href: "/transfer", title: "Internal transfer", body: "Move money between your accounts." },
   { href: "/ach", title: "ACH transfer", body: "Send or receive an electronic bank-to-bank payment." },
   { href: "/wire", title: "Wire transfer", body: "Send a domestic or international wire with routing and SWIFT details." },

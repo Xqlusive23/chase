@@ -26,6 +26,18 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   function tabActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard" || pathname.startsWith("/accounts");
+    if (href === "/payments") {
+      return (
+        pathname === "/payments" ||
+        pathname.startsWith("/payments/") ||
+        pathname === "/send" ||
+        pathname === "/transfer" ||
+        pathname === "/ach" ||
+        pathname === "/wire" ||
+        pathname === "/deposit" ||
+        pathname === "/bills"
+      );
+    }
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 

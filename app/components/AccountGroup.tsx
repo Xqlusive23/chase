@@ -12,10 +12,12 @@ export function AccountGroup({
   title,
   accounts,
   hideBalances = false,
+  live = true,
 }: {
   title: string;
   accounts: Account[];
   hideBalances?: boolean;
+  live?: boolean;
 }) {
   const { brand } = useBrand();
   if (accounts.length === 0) return null;
@@ -34,12 +36,24 @@ export function AccountGroup({
             <Link key={account.id} href={`/accounts/${account.id}`} className="block px-4 py-4">
               <div className="flex items-start justify-between gap-3">
                 <p className="min-w-0 text-sm font-semibold uppercase tracking-wide text-[var(--ink)]">
-                  <BrandText of={labeledAccountName(account.name, account.type, brand.name)} /> {maskAccount(account.number)}
+                  <BrandText of={labeledAccountName(account.name, account.type, brand.name)} />
                 </p>
                 <IconChevron className="mt-0.5 h-4 w-4 shrink-0 text-[var(--muted)]" />
               </div>
               <p className={`mt-2 text-3xl font-bold tracking-tight ${overdrawn ? "text-red-600" : "text-[var(--ink)]"}`}>
                 {hideBalances ? hiddenBalance() : formatMoney(shown)}
+              </p>
+              <p className="mt-1 text-sm text-[var(--muted)]">
+                Account {maskAccount(account.number)}
+                {live ? (
+                  <span className="ml-2 inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+                    Active
+                  </span>
+                ) : (
+                  <span className="ml-2 inline-flex rounded-full bg-orange-50 px-2 py-0.5 text-xs font-semibold text-orange-800">
+                    On hold
+                  </span>
+                )}
               </p>
               <p className="mt-1 text-sm text-[var(--muted)]">{accountBalanceLabel(account.type)}</p>
               {overdrawn && (

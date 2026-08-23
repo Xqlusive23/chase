@@ -10,7 +10,7 @@ export type Account = {
 
 export type ActivityStatus = "pending" | "processing" | "hold" | "posted";
 
-export type TransferType = "ach" | "wire" | "internal" | "bill" | "deposit" | "activity";
+export type TransferType = "ach" | "wire" | "internal" | "bill" | "deposit" | "activity" | "p2p";
 
 export type Transaction = {
   id: string;

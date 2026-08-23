@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { AccountGroup } from "../../components/AccountGroup";
 import {
   IconBriefcase,
@@ -12,14 +13,15 @@ import {
   IconPiggy,
   IconPlus,
 } from "../../components/Icons";
-import { labeledCardName } from "../../lib/brand";
+import { statusLabel } from "../../lib/activity";
 import { useBank } from "../../lib/bank-context";
-import { useBrand } from "../../components/BrandProvider";
-import { BrandText } from "../../components/BrandText";
-import { formatLongDate, greetingForNow } from "../../lib/format";
+import { formatDate, formatLongDate, formatSignedMoney, greetingForNow, maskAccount } from "../../lib/format";
+
+const RECENT_LIMIT = 5;
 
 const QUICK_ACTIONS = [
   { href: "/payments", label: "+", plus: true },
+  { href: "/send", label: "Pay a person" },
   { href: "/ach", label: "Send money" },
   { href: "/deposit", label: "Deposit checks" },
   { href: "/bills", label: "Pay bills" },
@@ -34,19 +36,33 @@ const OPEN_PRODUCTS = [
 
 export default function DashboardPage() {
   const { state } = useBank();
-  const { brand } = useBrand();
+  const [showAllActivity, setShowAllActivity] = useState(false);
   const cashAccounts = state.accounts.filter((account) => account.type !== "credit");
-  const creditAccounts = state.accounts.filter((account) => account.type === "credit");
+  const primaryAccount = cashAccounts[0] ?? state.accounts[0];
+  const live = !state.accountHold;
   const latestIn = [...state.transactions]
     .filter((item) => item.amount > 0)
     .sort((a, b) => +new Date(b.date) - +new Date(a.date))[0];
-  const creditCard = state.cards.find((card) => card.type === "credit") ?? state.cards[0];
+  const recent = useMemo(
+    () => [...state.transactions].sort((a, b) => +new Date(b.date) - +new Date(a.date)),
+    [state.transactions]
+  );
+  const visibleActivity = showAllActivity ? recent : recent.slice(0, RECENT_LIMIT);
 
   return (
     <div className="space-y-6 lg:space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--ink)]">{greetingForNow()}</h1>
+        <p className="text-sm font-medium text-[var(--muted)]">{greetingForNow()}</p>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-[var(--ink)]">{state.displayName}</h1>
         <p className="mt-1 text-[var(--muted)]">{formatLongDate()}</p>
+        {primaryAccount && live && (
+          <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-[var(--ink)]">
+            <span>Account {maskAccount(primaryAccount.number)}</span>
+            <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+              Active
+            </span>
+          </p>
+        )}
       </div>
 
       {state.accountHold && (
@@ -98,16 +114,66 @@ export default function DashboardPage() {
           <section className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">Accounts</h2>
-              <Link href="/accounts" className="px-2 text-lg text-[var(--muted)]" aria-label="Account options">
-                ···
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link href="/cards" className="text-sm font-semibold text-[var(--blue)]">
+                  View cards
+                </Link>
+                <Link href="/accounts" className="px-2 text-lg text-[var(--muted)]" aria-label="Account options">
+                  ···
+                </Link>
+              </div>
             </div>
-            <AccountGroup title="Bank accounts" accounts={cashAccounts} hideBalances={state.preferences?.hideBalances} />
-            <AccountGroup title="Credit cards" accounts={creditAccounts} hideBalances={state.preferences?.hideBalances} />
+            <AccountGroup
+              title="Bank accounts"
+              accounts={cashAccounts}
+              hideBalances={state.preferences?.hideBalances}
+              live={live}
+            />
             <Link href="/accounts/link" className="flex items-center justify-between px-1 py-2 text-sm font-semibold text-[var(--ink)]">
               Link external accounts
               <IconChevron className="h-4 w-4 text-[var(--muted)]" />
             </Link>
+          </section>
+
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Recent activity</h2>
+              <Link href="/transactions" className="text-sm font-semibold text-[var(--blue)]">
+                See all
+              </Link>
+            </div>
+            <div className="soft-card overflow-hidden">
+              {visibleActivity.length === 0 && (
+                <p className="px-4 py-6 text-sm text-[var(--muted)]">No recent activity.</p>
+              )}
+              {visibleActivity.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/receipt/${item.id}`}
+                  className="flex items-center gap-3 border-b border-[var(--line)] px-4 py-3 last:border-b-0"
+                >
+                  <span className={`status-dot shrink-0 ${item.status}`} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-[var(--navy)]">{item.description}</p>
+                    <p className="text-xs text-[var(--muted)]">
+                      {formatDate(item.date)} · {statusLabel(item.status)}
+                    </p>
+                  </div>
+                  <p className={`shrink-0 font-semibold ${item.amount >= 0 ? "text-emerald-700" : "text-red-600"}`}>
+                    {formatSignedMoney(item.amount)}
+                  </p>
+                </Link>
+              ))}
+              {recent.length > RECENT_LIMIT && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllActivity((current) => !current)}
+                  className="w-full px-4 py-3 text-sm font-semibold text-[var(--blue)]"
+                >
+                  {showAllActivity ? "Show less" : `Show more (${recent.length - RECENT_LIMIT})`}
+                </button>
+              )}
+            </div>
           </section>
         </div>
 
@@ -115,6 +181,9 @@ export default function DashboardPage() {
           <section className="soft-card p-5">
             <h2 className="text-lg font-bold">Move money</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+              <Link href="/send" className="rounded-xl bg-[var(--page)] px-4 py-3 font-semibold text-[var(--navy)]">
+                Pay a person
+              </Link>
               <Link href="/wire" className="rounded-xl bg-[var(--page)] px-4 py-3 font-semibold text-[var(--navy)]">
                 Wire transfer
               </Link>
@@ -129,24 +198,13 @@ export default function DashboardPage() {
               </Link>
             </div>
           </section>
-          {creditCard && (
-            <Link href="/cards" className="soft-card block overflow-hidden">
-              <div className="bg-[#0d1524] px-5 py-6">
-                <img
-                  src={creditCard.type === "credit" ? "/assets/chise-credit-card.png" : "/assets/chise-debit-card.png"}
-                  alt=""
-                  className="mx-auto h-40 w-auto max-w-full object-contain"
-                />
-              </div>
-              <div className="p-4">
-                <h2 className="font-bold">Your cards</h2>
-                <p className="mt-1 text-sm text-[var(--muted)]">
-                  <BrandText of={labeledCardName(creditCard.name, creditCard.type, brand.name)} /> ending in {creditCard.last4}
-                </p>
-                <span className="mt-2 inline-flex text-sm font-semibold text-[var(--blue)]">Open cards</span>
-              </div>
-            </Link>
-          )}
+          <Link href="/cards" className="soft-card flex items-center justify-between p-5">
+            <div>
+              <h2 className="font-bold">Cards</h2>
+              <p className="mt-1 text-sm text-[var(--muted)]">View debit and credit cards in a separate page.</p>
+            </div>
+            <IconChevron className="h-5 w-5 text-[var(--muted)]" />
+          </Link>
         </aside>
       </div>
 

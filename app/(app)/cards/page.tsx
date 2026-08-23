@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BackLink } from "../../components/BackLink";
 import { BankCard } from "../../components/BankCard";
 import { useBank } from "../../lib/bank-context";
 import { removeCard } from "../../lib/bank-store";
@@ -20,6 +21,7 @@ export default function CardsPage() {
 
   return (
     <div className="space-y-5">
+      <BackLink href="/dashboard" label="Dashboard" />
       <div>
         <h1 className="page-title">Cards</h1>
         <p className="page-sub">Freeze a card if it is misplaced. Show details only when you need the number.</p>

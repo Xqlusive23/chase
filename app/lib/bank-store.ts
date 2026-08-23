@@ -77,6 +77,10 @@ export function seedBank(username: string): BankState {
     transactions: [
       { id: id("txn"), accountId: checkingId, description: "Direct deposit — Payroll", category: "Income", amount: 2480, date: daysAgo(2), status: "posted", applied: true },
       { id: id("txn"), accountId: checkingId, description: "Harbor Market", category: "Groceries", amount: -64.22, date: daysAgo(1), status: "posted", applied: true },
+      { id: id("txn"), accountId: checkingId, description: "City Transit", category: "Travel", amount: -28.5, date: daysAgo(3), status: "posted", applied: true },
+      { id: id("txn"), accountId: savingsId, description: "Interest credit", category: "Income", amount: 4.12, date: daysAgo(4), status: "posted", applied: true },
+      { id: id("txn"), accountId: checkingId, description: "Northline Coffee", category: "Dining", amount: -6.75, date: daysAgo(5), status: "posted", applied: true },
+      { id: id("txn"), accountId: checkingId, description: "Lumen Electric", category: "Utilities", amount: -96.15, date: daysAgo(6), status: "posted", applied: true },
     ],
     bills: [
       { id: id("bill"), payee: "Lumen Electric", amount: 96.15, dueDate: daysFromNow(4), status: "due" },
