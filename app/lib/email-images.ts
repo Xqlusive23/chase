@@ -35,10 +35,15 @@ export function publicBankLogoUrl(name?: string) {
 }
 
 export async function shrinkDataImage(dataUrl: string | undefined, maxWidth = 360): Promise<string> {
-  return prepareBrandHeaderImage(dataUrl, maxWidth, false);
+  return prepareBrandHeaderImage(dataUrl, maxWidth, "none");
 }
 
-export async function prepareBrandHeaderImage(dataUrl: string | undefined, maxWidth = 360, whiten = true): Promise<string> {
+export async function prepareBrandHeaderImage(
+  dataUrl: string | undefined,
+  maxWidth = 360,
+  tone: "white" | "navy" | "none" | boolean = "white"
+): Promise<string> {
+  const mode = tone === true ? "white" : tone === false ? "none" : tone;
   if (!dataUrl?.startsWith("data:") || typeof document === "undefined") return dataUrl || "";
   return new Promise((resolve) => {
     const image = new Image();
@@ -53,19 +58,26 @@ export async function prepareBrandHeaderImage(dataUrl: string | undefined, maxWi
         return;
       }
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      if (whiten) {
+      if (mode !== "none") {
         const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
         const data = pixels.data;
         for (let index = 0; index < data.length; index += 4) {
           const brightness = (data[index] + data[index + 1] + data[index + 2]) / 3;
           if (data[index + 3] < 12) continue;
-          if (brightness > 235) {
-            data[index + 3] = 0;
-            continue;
+          if (mode === "white") {
+            if (brightness > 235) {
+              data[index + 3] = 0;
+              continue;
+            }
+            data[index] = 255;
+            data[index + 1] = 255;
+            data[index + 2] = 255;
+          } else {
+            if (brightness > 245 && data[index + 3] < 40) continue;
+            data[index] = 0;
+            data[index + 1] = 46;
+            data[index + 2] = 109;
           }
-          data[index] = 255;
-          data[index + 1] = 255;
-          data[index + 2] = 255;
         }
         context.putImageData(pixels, 0, 0);
       }

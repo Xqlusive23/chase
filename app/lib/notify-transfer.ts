@@ -79,7 +79,7 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
   if (!notice) return;
   try {
     const brand = readBrand();
-    const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage);
+    const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage, 360, "navy");
     const response = await fetch("/api/notify-transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

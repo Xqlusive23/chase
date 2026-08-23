@@ -29,6 +29,7 @@ export async function POST(request: Request) {
   const supportUrl = notice.supportHref || `${origin}/support`;
   const result = await sendResendEmail({
     to: body.to,
+    fromName: body.brandName,
     subject: copy.subject,
     html: transferEmailHtml({ ...notice, intendedRecipient: undefined }, supportUrl),
     text: copy.text,

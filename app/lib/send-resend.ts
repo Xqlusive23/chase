@@ -5,6 +5,7 @@ type SendInput = {
   subject: string;
   html: string;
   text: string;
+  fromName?: string;
   attachments?: {
     filename: string;
     content: Buffer;
@@ -12,13 +13,20 @@ type SendInput = {
   }[];
 };
 
+export function brandedFromAddress(brandName?: string) {
+  const configured = process.env.RESEND_FROM_EMAIL || "Notifications <onboarding@resend.dev>";
+  const email = configured.match(/<([^>]+)>/)?.[1]?.trim() || configured.trim();
+  const name = (brandName || "Notifications").replace(/[<>\r\n]/g, "").trim() || "Notifications";
+  return `${name} <${email}>`;
+}
+
 export async function sendResendEmail(input: SendInput) {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
     return { ok: false as const, error: "Missing RESEND_API_KEY", status: 501 };
   }
 
-  const from = process.env.RESEND_FROM_EMAIL || "Notifications <onboarding@resend.dev>";
+  const from = brandedFromAddress(input.fromName);
   const testInbox = process.env.RESEND_TEST_INBOX?.trim();
   const intended = input.to.trim().toLowerCase();
   const usingTestSender = from.toLowerCase().includes("onboarding@resend.dev");

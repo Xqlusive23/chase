@@ -27,6 +27,7 @@ export async function POST(request: Request) {
   const copy = accountEmailCopy(notice);
   const result = await sendResendEmail({
     to: body.to,
+    fromName: body.brandName,
     subject: copy.subject,
     html: accountEmailHtml(notice),
     text: copy.text,
