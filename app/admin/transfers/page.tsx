@@ -51,7 +51,7 @@ export default function AdminTransfersPage() {
     <div className="space-y-5">
       <div>
         <h1 className="page-title">Transfers</h1>
-        <p className="page-sub">Set pending, processing, hold, or posted for transfers this member makes after you change it. Existing payments keep their current status.</p>
+        <p className="page-sub">Set Pending, Processing, Hold, or Posted for transfers this member makes after you change it. Existing payments keep their current status.</p>
       </div>
       <div className="flex flex-wrap gap-2">
         {(["all", ...ACTIVITY_STATUSES] as const).map((value) => (

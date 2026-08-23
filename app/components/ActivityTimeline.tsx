@@ -30,7 +30,7 @@ export function ActivityTimeline({ transactions, accounts, filter, onFilter, hre
             } ${filter === status ? "bg-[var(--sky)]" : "hover:bg-[var(--page)]"}`}
           >
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">{statusLabel(status)}</p>
+              <p className="text-xs font-semibold tracking-wide text-[var(--muted)]">{statusLabel(status)}</p>
               <p className="mt-1 text-2xl font-semibold text-[var(--navy)]">{counts[status]}</p>
             </div>
             <span className={`status-dot ${status}`} />

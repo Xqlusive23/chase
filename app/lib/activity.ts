@@ -27,7 +27,9 @@ export function statusLabel(status: ActivityStatus) {
   if (status === "pending") return "Pending";
   if (status === "processing") return "Processing";
   if (status === "hold") return "Hold";
-  return "Posted";
+  if (status === "posted") return "Posted";
+  const value = String(status || "");
+  return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : "Posted";
 }
 
 export function receiptHeadline(status: ActivityStatus) {
