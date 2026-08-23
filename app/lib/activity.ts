@@ -184,10 +184,10 @@ export function currentAccountStatus(state: BankState): ActivityStatus {
 }
 
 export function setAccountActivityStatus(state: BankState, status: ActivityStatus): BankState {
-  return state.transactions.reduce<BankState>(
-    (current, item) => setTransferStatus(current, item.id, status),
-    { ...state, accountActivityStatus: status }
-  );
+  return {
+    ...state,
+    accountActivityStatus: status,
+  };
 }
 
 export function setTransferStatus(state: BankState, transactionId: string, status: ActivityStatus): BankState {

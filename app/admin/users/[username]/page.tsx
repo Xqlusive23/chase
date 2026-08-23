@@ -379,13 +379,13 @@ export default function AdminUserPage() {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold text-[var(--navy)]">Transfers</h2>
-            <p className="text-sm text-[var(--muted)]">This status applies to every transaction on the account.</p>
+            <p className="text-sm text-[var(--muted)]">This status applies to new transfers only. Existing activity stays as it is.</p>
           </div>
           <select
             value={currentAccountStatus(state)}
             onChange={(event) => {
               const status = event.target.value as ActivityStatus;
-              persist((current) => setAccountActivityStatus(current, status), `All activity set to ${statusLabel(status)}.`);
+              persist((current) => setAccountActivityStatus(current, status), `New transfers will use ${statusLabel(status)}.`);
             }}
             className="field max-w-[220px]"
           >
