@@ -55,18 +55,18 @@ export function p2pEmailHtml(notice: TransferNotice, supportUrl: string) {
   const body = `
     ${intro}
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px;width:100%;">
       <tr>
-        <td align="center">
-          <table role="presentation" cellpadding="0" cellspacing="0">
+        <td align="center" style="text-align:center;">
+          <table role="presentation" width="72" align="center" cellpadding="0" cellspacing="0" border="0" style="width:72px;margin:0 auto;">
             <tr>
-              <td align="center" valign="middle" width="72" height="72" bgcolor="${EMAIL_ASH}" style="width:72px;height:72px;background-color:${EMAIL_ASH};border-radius:36px;font-size:24px;line-height:72px;font-weight:700;color:#ffffff;text-align:center;">
+              <td align="center" valign="middle" width="72" height="72" bgcolor="${EMAIL_ASH}" style="width:72px;height:72px;background-color:${EMAIL_ASH};border-radius:36px;font-size:22px;line-height:72px;font-weight:700;color:#ffffff;text-align:center;">
                 ${marks}
               </td>
             </tr>
           </table>
-          <p style="margin:16px 0 0;font-size:15px;color:#64748b;">${fillP2pHtml(template.amountLine, vars)}</p>
-          <p style="margin:8px 0 0;font-size:40px;line-height:1.1;font-weight:700;color:#0b1f3a;letter-spacing:-0.03em;">${escapeHtml(amount)}</p>
+          <p style="margin:16px 0 0;font-size:15px;line-height:1.4;color:#64748b;text-align:center;">${fillP2pHtml(template.amountLine, vars)}</p>
+          <p class="email-amount" style="margin:8px 0 0;font-size:34px;line-height:1.2;font-weight:700;color:#0b1f3a;letter-spacing:-0.02em;text-align:center;">${escapeHtml(amount)}</p>
           ${
             memo
               ? `<p style="margin:14px 0 0;font-size:16px;line-height:1.4;color:#334155;font-style:italic;">&ldquo;${memo}&rdquo;</p>`
@@ -76,9 +76,9 @@ export function p2pEmailHtml(notice: TransferNotice, supportUrl: string) {
       </tr>
     </table>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc" style="margin-top:28px;background-color:#f8fafc;border-radius:16px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f8fafc" style="margin-top:28px;width:100%;background-color:#f8fafc;border-radius:12px;">
       <tr>
-        <td style="padding:18px 20px;">
+        <td style="padding:16px;">
           <p style="margin:0;font-size:16px;font-weight:700;color:#0b1f3a;">${headline}</p>
           <p style="margin:6px 0 0;font-size:14px;color:#64748b;">${subcopy}</p>
           <p style="margin:16px 0 0;font-size:13px;color:#64748b;">${escapeHtml(date)}</p>
@@ -88,12 +88,12 @@ export function p2pEmailHtml(notice: TransferNotice, supportUrl: string) {
       </tr>
     </table>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;width:100%;">
       <tr>
-        <td align="center">
+        <td align="left" style="text-align:left;word-break:break-word;">
           ${
             template.contactNote.trim()
-              ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#334155;text-align:left;">${fillP2pHtml(template.contactNote, vars).replace(/\n/g, "<br />")}</p>`
+              ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#334155;text-align:left;word-break:break-word;">${fillP2pHtml(template.contactNote, vars).replace(/\n/g, "<br />")}</p>`
               : ""
           }
           ${emailContactCta(contact, "center")}
