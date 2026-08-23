@@ -9,7 +9,7 @@ function setLink(rel: string, href: string, extras?: { sizes?: string; type?: st
     document.head.appendChild(link);
   }
   link.href = href;
-  if (extras?.sizes) link.sizes = extras.sizes;
+  if (extras?.sizes) link.setAttribute("sizes", extras.sizes);
   if (extras?.type) link.type = extras.type;
 }
 
