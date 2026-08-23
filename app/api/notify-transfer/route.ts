@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   const brandNameCid = "brand-name";
   const brandMarkCid = "brand-mark";
   const brandImage = inlineFromDataUrl(body.brandNameImage, brandNameCid, "brand-name.png");
-  const brandMark = inlineFromDataUrl(body.brandLogo || body.brandNameImage, brandMarkCid, "brand-mark.png");
+  const brandMark = inlineFromDataUrl(body.brandLogo, brandMarkCid, "logo.png");
   const bankLogo = body.bankLogo || publicBankLogoUrl(body.bankName);
   const notice = {
     ...body,

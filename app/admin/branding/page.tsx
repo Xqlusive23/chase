@@ -5,6 +5,7 @@ import { useBrand } from "../../components/BrandProvider";
 import { useStoreSync } from "../../components/StoreProvider";
 import { DEFAULT_BRAND, brandMark } from "../../lib/brand";
 import { shrinkDataImage } from "../../lib/email-images";
+import { DEFAULT_P2P_EMAIL, P2P_PLACEHOLDERS, normalizeP2pEmail, p2pTemplateBlocked } from "../../lib/p2p-template";
 import { pushStore } from "../../lib/sync";
 
 export default function AdminBrandingPage() {
@@ -16,6 +17,7 @@ export default function AdminBrandingPage() {
   const [logo, setLogo] = useState(brand.logo);
   const [nameImage, setNameImage] = useState(brand.nameImage);
   const [nameImageScale, setNameImageScale] = useState(brand.nameImageScale || 56);
+  const [p2pEmail, setP2pEmail] = useState(normalizeP2pEmail(brand.p2pEmail));
   const [saved, setSaved] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -25,6 +27,7 @@ export default function AdminBrandingPage() {
     setLogo(brand.logo);
     setNameImage(brand.nameImage);
     setNameImageScale(brand.nameImageScale || 56);
+    setP2pEmail(normalizeP2pEmail(brand.p2pEmail));
   }, [brand]);
 
   function readFile(file: File | undefined, setter: (value: string) => void) {
@@ -40,12 +43,19 @@ export default function AdminBrandingPage() {
     event.preventDefault();
     setError("");
     setSaved("");
+    const nextP2p = normalizeP2pEmail(p2pEmail);
+    const blocked = p2pTemplateBlocked(nextP2p);
+    if (blocked) {
+      setError(blocked);
+      return;
+    }
     setSaving(true);
     setBrand({
       name: name.trim() || DEFAULT_BRAND.name,
       logo,
       nameImage,
       nameImageScale,
+      p2pEmail: nextP2p,
     });
     const result = await pushStore();
     setSaving(false);
@@ -61,6 +71,7 @@ export default function AdminBrandingPage() {
     setLogo("");
     setNameImage("");
     setNameImageScale(DEFAULT_BRAND.nameImageScale);
+    setP2pEmail(DEFAULT_P2P_EMAIL);
     setBrand(DEFAULT_BRAND);
     setError("");
     setSaving(true);
@@ -150,6 +161,76 @@ export default function AdminBrandingPage() {
             className="hidden"
             onChange={(event) => readFile(event.target.files?.[0], setLogo)}
           />
+        </div>
+
+        <div className="space-y-3 border-t border-[var(--line)] pt-4">
+          <div>
+            <h2 className="text-lg font-semibold text-[var(--navy)]">Pay a person email</h2>
+            <p className="mt-1 text-sm text-[var(--muted)]">
+              Change the wording and header color for payment-received mail. Use placeholders: {P2P_PLACEHOLDERS.join(", ")}.
+            </p>
+          </div>
+          <label className="block">
+            <span className="mb-1 block text-sm text-[var(--muted)]">Subject</span>
+            <input
+              value={p2pEmail.subject}
+              onChange={(event) => setP2pEmail({ ...p2pEmail, subject: event.target.value })}
+              className="field"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm text-[var(--muted)]">Header label</span>
+            <input
+              value={p2pEmail.eyebrow}
+              onChange={(event) => setP2pEmail({ ...p2pEmail, eyebrow: event.target.value })}
+              className="field"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm text-[var(--muted)]">Header color</span>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={p2pEmail.headerColor}
+                onChange={(event) => setP2pEmail({ ...p2pEmail, headerColor: event.target.value })}
+                className="h-10 w-14 cursor-pointer rounded border border-[var(--line)] bg-white p-1"
+              />
+              <input
+                value={p2pEmail.headerColor}
+                onChange={(event) => setP2pEmail({ ...p2pEmail, headerColor: event.target.value })}
+                className="field"
+              />
+            </div>
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm text-[var(--muted)]">Opening lines</span>
+            <textarea
+              value={p2pEmail.intro}
+              onChange={(event) => setP2pEmail({ ...p2pEmail, intro: event.target.value })}
+              rows={3}
+              className="field min-h-[88px]"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm text-[var(--muted)]">Line above the amount</span>
+            <input
+              value={p2pEmail.amountLine}
+              onChange={(event) => setP2pEmail({ ...p2pEmail, amountLine: event.target.value })}
+              className="field"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm text-[var(--muted)]">Footer</span>
+            <textarea
+              value={p2pEmail.footer}
+              onChange={(event) => setP2pEmail({ ...p2pEmail, footer: event.target.value })}
+              rows={3}
+              className="field min-h-[88px]"
+            />
+          </label>
+          <button type="button" onClick={() => setP2pEmail(DEFAULT_P2P_EMAIL)} className="text-sm font-semibold text-[var(--blue)]">
+            Reset Pay a person email
+          </button>
         </div>
 
         <div className="rounded-xl bg-[var(--page)] p-4">

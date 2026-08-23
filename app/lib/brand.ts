@@ -1,3 +1,4 @@
+import { DEFAULT_P2P_EMAIL, normalizeP2pEmail, type P2pEmailTemplate } from "./p2p-template";
 import type { Account, Card } from "./types";
 import { schedulePush } from "./sync";
 
@@ -6,6 +7,7 @@ export type BrandSettings = {
   logo: string;
   nameImage: string;
   nameImageScale: number;
+  p2pEmail: P2pEmailTemplate;
 };
 
 export const BRAND_KEY = "chise_brand";
@@ -15,6 +17,7 @@ export const DEFAULT_BRAND: BrandSettings = {
   logo: "",
   nameImage: "",
   nameImageScale: 56,
+  p2pEmail: DEFAULT_P2P_EMAIL,
 };
 
 export function readBrand(): BrandSettings {
@@ -28,6 +31,7 @@ export function readBrand(): BrandSettings {
       logo: parsed.logo || "",
       nameImage: parsed.nameImage || "",
       nameImageScale: Number(parsed.nameImageScale) || DEFAULT_BRAND.nameImageScale,
+      p2pEmail: normalizeP2pEmail(parsed.p2pEmail),
     };
   } catch {
     return DEFAULT_BRAND;

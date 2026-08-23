@@ -48,6 +48,33 @@ export async function shrinkDataImage(dataUrl: string | undefined, maxWidth = 36
   return prepareBrandHeaderImage(dataUrl, maxWidth, "none");
 }
 
+export async function prepareSenderLogo(dataUrl: string | undefined, size = 192): Promise<string> {
+  if (!dataUrl?.startsWith("data:") || typeof document === "undefined") return dataUrl || "";
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const context = canvas.getContext("2d");
+      if (!context) {
+        resolve(dataUrl);
+        return;
+      }
+      context.clearRect(0, 0, size, size);
+      const pad = size * 0.1;
+      const box = size - pad * 2;
+      const scale = Math.min(box / Math.max(image.width, 1), box / Math.max(image.height, 1));
+      const width = image.width * scale;
+      const height = image.height * scale;
+      context.drawImage(image, (size - width) / 2, (size - height) / 2, width, height);
+      resolve(canvas.toDataURL("image/png"));
+    };
+    image.onerror = () => resolve(dataUrl);
+    image.src = dataUrl;
+  });
+}
+
 export async function prepareBrandHeaderImage(
   dataUrl: string | undefined,
   maxWidth = 360,

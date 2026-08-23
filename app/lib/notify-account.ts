@@ -1,5 +1,5 @@
 import { bankDisplayName, readBrand } from "./brand";
-import { prepareBrandHeaderImage } from "./email-images";
+import { prepareBrandHeaderImage, prepareSenderLogo } from "./email-images";
 import { isValidEmail } from "./notify-transfer";
 import type { AccountNotice } from "./account-email";
 
@@ -8,9 +8,8 @@ export async function notifyAccountEmail(input: Omit<AccountNotice, "brandName" 
   if (!to || !isValidEmail(to)) return;
   try {
     const brand = readBrand();
-    const mark = brand.logo || brand.nameImage;
-    const brandNameImage = await prepareBrandHeaderImage(brand.nameImage, 360, "white");
-    const brandLogo = await prepareBrandHeaderImage(mark, 180, brand.logo ? "none" : "white");
+    const brandNameImage = await prepareBrandHeaderImage(brand.nameImage, 280, "white");
+    const brandLogo = brand.logo ? await prepareSenderLogo(brand.logo, 192) : "";
     const response = await fetch("/api/notify-account", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

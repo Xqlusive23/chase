@@ -1,7 +1,8 @@
 import { bankDisplayName, readBrand } from "./brand";
 import { statusLabel } from "./activity";
-import { prepareBrandHeaderImage, publicBankLogoUrl } from "./email-images";
+import { prepareBrandHeaderImage, prepareSenderLogo, publicBankLogoUrl } from "./email-images";
 import { formatMoney, formatMoneyUsd } from "./format";
+import { fillP2pText, firstNameFrom, normalizeP2pEmail, type P2pEmailTemplate } from "./p2p-template";
 import { supportHref, supportLabel } from "./support";
 import type { ActivityStatus, BankState, Transaction, TransferType } from "./types";
 
@@ -28,6 +29,7 @@ export type TransferNotice = {
   brandNameCid?: string;
   brandMarkCid?: string;
   bankLogoCid?: string;
+  p2pEmail?: P2pEmailTemplate;
 };
 
 export function isValidEmail(value: string) {
@@ -82,9 +84,8 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
   if (!notice) return;
   try {
     const brand = readBrand();
-    const mark = brand.logo || brand.nameImage;
-    const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage, 360, "white");
-    const brandLogo = await prepareBrandHeaderImage(mark, 180, brand.logo ? "none" : "white");
+    const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage, 280, "white");
+    const brandLogo = brand.logo ? await prepareSenderLogo(brand.logo, 192) : "";
     const response = await fetch("/api/notify-transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -95,6 +96,7 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
         brandLogo,
         bankName: notice.bankName,
         bankLogo: notice.bankLogo || publicBankLogoUrl(notice.bankName),
+        p2pEmail: notice.transferType === "p2p" ? normalizeP2pEmail(notice.p2pEmail || brand.p2pEmail) : undefined,
       }),
     });
     if (!response.ok) {
@@ -111,15 +113,28 @@ export function transferEmailCopy(notice: TransferNotice) {
   const amount = formatMoneyUsd(notice.amount);
   if (notice.transferType === "p2p") {
     const sent = formatMoney(notice.amount);
+    const template = normalizeP2pEmail(notice.p2pEmail);
+    const vars = {
+      sender: notice.senderName,
+      recipient: notice.recipientName,
+      firstName: firstNameFrom(notice.recipientName),
+      amount: sent,
+      memo: notice.memo?.trim() || "",
+      brand: notice.brandName,
+      date: notice.date || "",
+      status,
+      ref: notice.transactionId,
+    };
     return {
-      subject: `${notice.senderName} sent you ${sent}`,
+      subject: fillP2pText(template.subject, vars),
       text: [
-        `Hi ${notice.recipientName},`,
+        fillP2pText(template.intro, vars),
         "",
-        `You received ${sent} from ${notice.senderName}.`,
+        `${fillP2pText(template.amountLine, vars)} ${sent}`.trim(),
         notice.memo ? `Memo: ${notice.memo}` : "",
         `Status: ${status}`,
         `Transaction ID: ${notice.transactionId}`,
+        fillP2pText(template.footer, vars),
         notice.intendedRecipient ? `Intended recipient: ${notice.intendedRecipient}` : "",
       ]
         .filter(Boolean)

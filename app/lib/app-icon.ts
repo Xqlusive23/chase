@@ -40,10 +40,11 @@ async function squareIcon(src: string | undefined, name: string, size: number) {
   canvas.height = size;
   const ctx = canvas.getContext("2d");
   if (!ctx) return "";
-  ctx.fillStyle = "#0b1f3a";
-  ctx.fillRect(0, 0, size, size);
+  ctx.clearRect(0, 0, size, size);
 
   if (!src) {
+    ctx.fillStyle = "#0b1f3a";
+    ctx.fillRect(0, 0, size, size);
     drawFallback(ctx, size, name);
     return canvas.toDataURL("image/png");
   }
@@ -71,7 +72,7 @@ async function squareIcon(src: string | undefined, name: string, size: number) {
 
 export async function applyAppIcons(brand: BrandSettings) {
   if (typeof document === "undefined") return;
-  const src = brand.logo || brand.nameImage || undefined;
+  const src = brand.logo || undefined;
   const title = bankDisplayName(brand.name);
   const [icon192, icon512] = await Promise.all([
     squareIcon(src, title, 192),

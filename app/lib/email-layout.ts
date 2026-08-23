@@ -13,30 +13,20 @@ export function emailHeader(
   eyebrow: string,
   brandName: string,
   brandNameCid?: string,
-  brandMarkCid?: string,
+  _brandMarkCid?: string,
   background = EMAIL_NAVY
 ) {
   const brand = escapeHtml(brandName);
   const bg = background;
   const fill = `background:${bg};background-color:${bg};background-image:linear-gradient(${bg},${bg});`;
-  const icon = brandMarkCid
-    ? `<img src="cid:${brandMarkCid}" alt="" width="40" height="40" style="display:block;border:0;width:40px;height:40px;border-radius:8px;background-color:${bg};" />`
-    : "";
   const title = brandNameCid
-    ? `<img src="cid:${brandNameCid}" alt="${brand}" width="200" style="display:block;border:0;max-width:80%;width:200px;height:auto;margin:12px 0 0;" />`
-    : `<h1 style="margin:12px 0 0;font-size:24px;line-height:1.2;color:#ffffff;font-weight:700;">${brand}</h1>`;
+    ? `<img src="cid:${brandNameCid}" alt="${brand}" width="168" style="display:block;border:0;margin:8px auto 0;max-width:68%;width:168px;height:auto;" />`
+    : `<h1 style="margin:8px 0 0;font-size:22px;line-height:1.2;color:#ffffff;font-weight:700;text-align:center;">${brand}</h1>`;
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${bg}" style="${fill}width:100%;">
       <tr>
-        <td class="email-header-bg" bgcolor="${bg}" style="${fill}padding:28px 24px;text-align:left;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              ${icon ? `<td valign="middle" style="padding-right:12px;">${icon}</td>` : ""}
-              <td valign="middle">
-                <p style="margin:0;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;">${escapeHtml(eyebrow)}</p>
-              </td>
-            </tr>
-          </table>
+        <td class="email-header-bg" bgcolor="${bg}" align="center" style="${fill}padding:12px 18px 14px;text-align:center;">
+          <p style="margin:0;font-size:15px;line-height:1.25;letter-spacing:0.16em;text-transform:uppercase;color:#ffffff;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,0.55);">${escapeHtml(eyebrow)}</p>
           ${title}
         </td>
       </tr>

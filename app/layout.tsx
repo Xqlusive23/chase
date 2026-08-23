@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   themeColor: "#0b1f3a",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: [{ url: "/api/brand-icon", type: "image/png" }],
-    apple: "/api/brand-icon",
+    icon: [{ url: "/api/brand-icon?kind=logo", type: "image/png" }],
+    apple: "/api/brand-icon?kind=logo",
   },
   appleWebApp: {
     capable: true,
