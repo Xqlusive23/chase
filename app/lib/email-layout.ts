@@ -1,5 +1,7 @@
 export const EMAIL_NAVY = "#002e6d";
 export const EMAIL_BLUE = "#0b5cab";
+export const EMAIL_ASH = "#b0b4b8";
+export const EMAIL_DEEP_ASH = "#3f4348";
 
 function escapeHtml(value: string) {
   return value
@@ -26,7 +28,7 @@ export function emailHeader(
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${bg}" style="${fill}width:100%;">
       <tr>
         <td class="email-header-bg" bgcolor="${bg}" align="center" style="${fill}padding:12px 18px 14px;text-align:center;">
-          <p style="margin:0;font-size:15px;line-height:1.25;letter-spacing:0.16em;text-transform:uppercase;color:#ffffff;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,0.55);">${escapeHtml(eyebrow)}</p>
+          <p style="margin:0;font-size:15px;line-height:1.25;letter-spacing:0.16em;text-transform:uppercase;color:#ffffff !important;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,0.55);">${escapeHtml(eyebrow)}</p>
           ${title}
         </td>
       </tr>
@@ -58,7 +60,8 @@ export function emailContactCta(href?: string, align: "left" | "center" = "left"
   </table>`;
 }
 
-export function emailShell(header: string, body: string, footer: string, headerBg = EMAIL_NAVY) {
+export function emailShell(header: string, body: string, footer: string, headerBg = EMAIL_NAVY, bodyBg = "#ffffff") {
+  const footerColor = bodyBg === "#ffffff" ? "#717171" : "#c5c8cc";
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -74,7 +77,7 @@ export function emailShell(header: string, body: string, footer: string, headerB
       img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
       table { border-collapse: collapse !important; }
       body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
-      .email-header-bg { background-color: ${headerBg} !important; }
+      .email-header-bg { background-color: ${headerBg} !important; color: #ffffff !important; }
       @media (prefers-color-scheme: dark) {
         .email-header-bg { background-color: ${headerBg} !important; color: #ffffff !important; }
       }
@@ -84,15 +87,15 @@ export function emailShell(header: string, body: string, footer: string, headerB
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f4f6f8" style="background-color:#f4f6f8;width:100%;">
       <tr>
         <td align="center" style="padding:16px 8px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="width:100%;max-width:560px;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e4e8ee;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${bodyBg}" style="width:100%;max-width:560px;background-color:${bodyBg};border-radius:16px;overflow:hidden;border:1px solid #d5d7db;">
             <tr>
               <td bgcolor="${headerBg}" style="background-color:${headerBg};padding:0;">${header}</td>
             </tr>
             <tr>
-              <td bgcolor="#ffffff" style="background-color:#ffffff;padding:20px;">${body}</td>
+              <td bgcolor="${bodyBg}" style="background-color:${bodyBg};padding:20px;">${body}</td>
             </tr>
             <tr>
-              <td bgcolor="#ffffff" style="background-color:#ffffff;padding:0 20px 20px;font-size:12px;line-height:1.6;color:#717171;">${footer}</td>
+              <td bgcolor="${bodyBg}" style="background-color:${bodyBg};padding:0 20px 20px;font-size:12px;line-height:1.6;color:${footerColor};">${footer}</td>
             </tr>
           </table>
         </td>

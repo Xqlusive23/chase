@@ -15,7 +15,7 @@ export const DEFAULT_P2P_EMAIL: P2pEmailTemplate = {
   intro: "Hi {{firstName}},\nYou received money.",
   amountLine: "{{sender}} sent you",
   footer: "This payment notice was sent by {{brand}}. If you did not expect this, tap Contact us.",
-  headerColor: "#0b5cab",
+  headerColor: "#3f4348",
   nameImage: "",
   contactNote: "If you did not expect this payment, tap Contact us.",
 };
