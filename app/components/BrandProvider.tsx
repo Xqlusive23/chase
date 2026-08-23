@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { applyAppIcons } from "../lib/app-icon";
 import { DEFAULT_BRAND, applyBrandName, readBrand, writeBrand, type BrandSettings } from "../lib/brand";
 
 type BrandContextValue = {
@@ -31,7 +32,8 @@ export function BrandProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.title = `${brand.name} — Online banking`;
-  }, [brand.name]);
+    void applyAppIcons(brand);
+  }, [brand]);
 
   function setBrand(next: BrandSettings) {
     writeBrand(next);
