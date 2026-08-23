@@ -80,7 +80,7 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
   try {
     const brand = readBrand();
     const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage);
-    await fetch("/api/notify-transfer", {
+    const response = await fetch("/api/notify-transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -92,6 +92,10 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
         bankLogo: notice.bankLogo || publicBankLogoUrl(notice.bankName),
       }),
     });
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      console.error("Transfer email failed:", payload?.error || response.statusText);
+    }
   } catch {
     /* a missing key or network error should not block the transfer */
   }

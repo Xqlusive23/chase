@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useBrand } from "../../../components/BrandProvider";
 import { BrandText } from "../../../components/BrandText";
+import { labeledAccountName } from "../../../lib/brand";
 import { IconChevron } from "../../../components/Icons";
 import { useBank } from "../../../lib/bank-context";
 import { activityKind, accountBalanceLabel, displayBalance, formatDate, formatMoney, formatSignedMoney, hiddenBalance, maskAccount } from "../../../lib/format";
@@ -10,6 +12,7 @@ import { activityKind, accountBalanceLabel, displayBalance, formatDate, formatMo
 export default function AccountDetailPage() {
   const params = useParams<{ id: string }>();
   const { state } = useBank();
+  const { brand } = useBrand();
   const account = state.accounts.find((item) => item.id === params.id);
 
   if (!account) {
@@ -32,7 +35,7 @@ export default function AccountDetailPage() {
       </Link>
       <div className="soft-card p-5">
         <p className="text-xs font-semibold uppercase text-[var(--muted)]">
-          <BrandText of={account.name} /> {maskAccount(account.number)}
+          <BrandText of={labeledAccountName(account.name, account.type, brand.name)} /> {maskAccount(account.number)}
         </p>
         <p className={`mt-2 text-4xl font-bold ${account.type !== "credit" && account.balance < 0 ? "text-red-600" : ""}`}>
           {state.preferences?.hideBalances ? hiddenBalance() : formatMoney(displayBalance(account.type, account.balance))}

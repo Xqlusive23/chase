@@ -135,7 +135,7 @@ export default function Home() {
 
       <section id="help" className="bg-[var(--navy)] text-white">
         <div className="mx-auto max-w-6xl px-4 py-14">
-          <h2 className="text-3xl font-semibold">Banking with <BrandText />.</h2>
+          <h2 className="text-3xl font-semibold">Banking with <BrandText light />.</h2>
           <p className="mt-3 max-w-3xl text-white/75">
             Create an account, follow activity from pending to posted, or sign in to manage payments and transfers.
           </p>

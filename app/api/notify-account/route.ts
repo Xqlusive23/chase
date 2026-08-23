@@ -1,15 +1,10 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { accountEmailCopy, accountEmailHtml, type AccountNotice } from "../../lib/account-email";
 import { inlineFromDataUrl } from "../../lib/email-images";
 import { isValidEmail } from "../../lib/notify-transfer";
+import { sendResendEmail } from "../../lib/send-resend";
 
 export async function POST(request: Request) {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) {
-    return NextResponse.json({ ok: false, error: "Missing RESEND_API_KEY" }, { status: 501 });
-  }
-
   let body: AccountNotice;
   try {
     body = (await request.json()) as AccountNotice;
@@ -21,27 +16,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Invalid account notice" }, { status: 400 });
   }
 
-  const from = process.env.RESEND_FROM_EMAIL || "Notifications <onboarding@resend.dev>";
-  const testInbox = process.env.RESEND_TEST_INBOX?.trim();
-  const intended = body.to.trim().toLowerCase();
-  const usingTestSender = from.toLowerCase().includes("onboarding@resend.dev");
-  const deliverTo =
-    usingTestSender && testInbox && intended !== testInbox.toLowerCase() ? testInbox : body.to.trim();
-
   const brandNameCid = "brand-name";
   const brandImage = inlineFromDataUrl(body.brandNameImage, brandNameCid, "brand-name.png");
   const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
   const notice: AccountNotice = {
     ...body,
-    intendedRecipient: deliverTo.toLowerCase() === intended ? undefined : body.to.trim(),
     brandNameCid: brandImage ? brandNameCid : undefined,
     loginHref: body.loginHref || `${origin}/login`,
   };
   const copy = accountEmailCopy(notice);
-  const resend = new Resend(key);
-  const { error } = await resend.emails.send({
-    from,
-    to: deliverTo,
+  const result = await sendResendEmail({
+    to: body.to,
     subject: copy.subject,
     html: accountEmailHtml(notice),
     text: copy.text,
@@ -56,9 +41,13 @@ export async function POST(request: Request) {
       : undefined,
   });
 
-  if (error) {
-    return NextResponse.json({ ok: false, error: error.message }, { status: 502 });
+  if (!result.ok) {
+    return NextResponse.json({ ok: false, error: result.error }, { status: result.status });
   }
 
-  return NextResponse.json({ ok: true, deliveredTo: deliverTo });
+  return NextResponse.json({
+    ok: true,
+    deliveredTo: result.deliveredTo,
+    intendedRecipient: result.intendedRecipient,
+  });
 }

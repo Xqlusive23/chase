@@ -1,5 +1,6 @@
+import { schedulePush } from "./sync";
 import { defaultPreferences } from "./activity";
-import { DEFAULT_BRAND, applyBrandName, readBrand } from "./brand";
+import { DEFAULT_BRAND, labeledAccountName, labeledCardName, readBrand } from "./brand";
 import { seedCards } from "./cards";
 import type { BankState, Loan, Transaction } from "./types";
 
@@ -67,7 +68,7 @@ export function seedBank(username: string): BankState {
       },
       {
         id: creditId,
-        name: `${brandName()} Card`,
+        name: "Credit Card",
         type: "credit",
         number: "55190214",
         balance: -842.18,
@@ -118,32 +119,23 @@ export function findBankUsername(identifier: string) {
   return listBankUsernames().find((name) => name.toLowerCase() === needle);
 }
 
-function defaultCreditAccount() {
+export function removeAccount(state: BankState, accountId: string): BankState {
+  if (state.accounts.length <= 1) return state;
   return {
-    id: "acc_credit",
-    name: `${brandName()} Card`,
-    type: "credit" as const,
-    number: "55190214",
-    balance: -842.18,
+    ...state,
+    accounts: state.accounts.filter((account) => account.id !== accountId),
   };
 }
 
-function defaultCreditCard(holder: string) {
+export function removeCard(state: BankState, cardId: string): BankState {
   return {
-    id: "card_credit",
-    name: `${brandName()} Credit`,
-    last4: "0214",
-    holder,
-    expires: "11/27",
-    locked: false,
-    type: "credit" as const,
+    ...state,
+    cards: state.cards.filter((card) => card.id !== cardId),
   };
 }
 
 function normalizeBank(state: BankState): BankState {
-  const accounts = state.accounts.some((account) => account.type === "credit")
-    ? state.accounts
-    : [...state.accounts, defaultCreditAccount()];
+  const accounts = state.accounts ?? [];
   const cards = state.cards ?? [];
   return {
     ...state,
@@ -159,14 +151,12 @@ function normalizeBank(state: BankState): BankState {
     linkedAccounts: state.linkedAccounts ?? [],
     accounts: accounts.map((account) => ({
       ...account,
-      name: applyBrandName(account.name, brandName()),
+      name: labeledAccountName(account.name, account.type, brandName()),
     })),
-    cards: (cards.some((card) => card.type === "credit") ? cards : [...cards, defaultCreditCard(state.displayName)]).map(
-      (card) => ({
-        ...card,
-        name: applyBrandName(card.name, brandName()),
-      })
-    ),
+    cards: cards.map((card) => ({
+      ...card,
+      name: labeledCardName(card.name, card.type, brandName()),
+    })),
     transactions: state.transactions.map((item) => ({
       ...item,
       status: item.status ?? "posted",
@@ -190,8 +180,10 @@ export function loadBank(username: string): BankState {
   try {
     const parsed = JSON.parse(raw) as BankState;
     const normalized = normalizeBank(parsed);
-    const missingCredit = !parsed.accounts?.some((account) => account.type === "credit");
-    if (missingCredit || parsed.deposits == null || parsed.cards == null) {
+    const namesChanged =
+      normalized.accounts.some((account, index) => account.name !== parsed.accounts?.[index]?.name) ||
+      normalized.cards.some((card, index) => card.name !== parsed.cards?.[index]?.name);
+    if (namesChanged || parsed.deposits == null || parsed.cards == null) {
       saveBank(storedName, normalized);
     }
     return normalized;
@@ -205,4 +197,5 @@ export function loadBank(username: string): BankState {
 export function saveBank(username: string, state: BankState) {
   const storedName = findBankUsername(username) ?? username;
   localStorage.setItem(`${STORAGE_PREFIX}${storedName}`, JSON.stringify(state));
+  schedulePush();
 }

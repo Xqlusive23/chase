@@ -1,10 +1,13 @@
 "use client";
 
+import { labeledCardName } from "../lib/brand";
 import { cardCvv, cardPan } from "../lib/format";
 import type { Card } from "../lib/types";
+import { useBrand } from "./BrandProvider";
 import { BrandText } from "./BrandText";
 
 export function BankCard({ card, revealed = false }: { card: Card; revealed?: boolean }) {
+  const { brand } = useBrand();
   const image = card.type === "credit" ? "/assets/chise-credit-card.png" : "/assets/chise-debit-card.png";
   const number = revealed ? cardPan(card.last4, card.pan) : `•••• •••• •••• ${card.last4}`;
 
@@ -20,7 +23,7 @@ export function BankCard({ card, revealed = false }: { card: Card; revealed?: bo
         )}
         <div className="absolute bottom-4 left-5 right-5">
           <p className="text-sm text-white/70">
-            {card.locked ? "Frozen" : "Active"} · <BrandText of={card.name} />
+            {card.locked ? "Frozen" : "Active"} · <BrandText of={labeledCardName(card.name, card.type, brand.name)} />
           </p>
           <p className="mt-1 text-xl tracking-[0.12em]">{number}</p>
           <div className="mt-3 flex justify-between text-sm">

@@ -2,10 +2,12 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useBrand } from "../../components/BrandProvider";
+import { useStoreSync } from "../../components/StoreProvider";
 import { DEFAULT_BRAND, brandMark } from "../../lib/brand";
 
 export default function AdminBrandingPage() {
   const { brand, setBrand } = useBrand();
+  const { synced } = useStoreSync();
   const logoRef = useRef<HTMLInputElement>(null);
   const nameImageRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(brand.name);
@@ -53,7 +55,7 @@ export default function AdminBrandingPage() {
       <div>
         <h1 className="page-title">Branding</h1>
         <p className="page-sub">
-          Use a name image in place of written text, or keep the name and place the logo on the right.
+          Use a name image in place of written text, or keep the name and place the logo on the right. Saved branding is shared with every device once the live store is connected.
         </p>
       </div>
       <form onSubmit={handleSave} className="panel space-y-4 p-6">
@@ -63,10 +65,10 @@ export default function AdminBrandingPage() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             className="field"
-            placeholder="Used in page copy wherever the bank name appears"
+            placeholder="Dorth or Dorth Bank"
           />
           <p className="mt-1 text-sm text-[var(--muted)]">
-            This written name replaces Chise Bank in sentences and account names. A name image is only used in headers.
+            This is the name that replaces Chise Bank everywhere, including cards and Investments. If you enter Dorth, pages will show Dorth Bank.
           </p>
         </label>
 
@@ -153,6 +155,11 @@ export default function AdminBrandingPage() {
             <span className="text-sm text-white/70">Receipt</span>
           </div>
         </div>
+        {synced === false && (
+          <p className="text-sm text-amber-800">
+            This save stays on this device until Vercel KV is added. After that, branding and members sync to every device.
+          </p>
+        )}
         {saved && <p className="text-sm text-[var(--blue)]">{saved}</p>}
         <div className="flex flex-wrap gap-2">
           <button className="btn-primary">Save branding</button>

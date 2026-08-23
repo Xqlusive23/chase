@@ -9,7 +9,7 @@ export async function notifyAccountEmail(input: Omit<AccountNotice, "brandName" 
   try {
     const brand = readBrand();
     const brandNameImage = await prepareBrandHeaderImage(brand.nameImage);
-    await fetch("/api/notify-account", {
+    const response = await fetch("/api/notify-account", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -19,6 +19,10 @@ export async function notifyAccountEmail(input: Omit<AccountNotice, "brandName" 
         brandNameImage,
       }),
     });
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      console.error("Account email failed:", payload?.error || response.statusText);
+    }
   } catch {
     /* missing key or network should not block signup */
   }

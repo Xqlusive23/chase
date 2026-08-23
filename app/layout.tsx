@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import { BrandProvider } from "./components/BrandProvider";
+import { StoreProvider } from "./components/StoreProvider";
 import "./globals.css";
 
 const sans = Source_Sans_3({ subsets: ["latin"], variable: "--font-sans" });
@@ -30,7 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${sans.variable} font-[family-name:var(--font-sans)] antialiased`} suppressHydrationWarning>
-        <BrandProvider>{children}</BrandProvider>
+        <StoreProvider>
+          <BrandProvider>{children}</BrandProvider>
+        </StoreProvider>
       </body>
     </html>
   );

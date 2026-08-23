@@ -1,13 +1,15 @@
 "use client";
 
-import { applyBrandName } from "../lib/brand";
+import { applyBrandName, bankDisplayName } from "../lib/brand";
 import { useBrand } from "./BrandProvider";
 
 export function BrandText({
   of,
 }: {
   of?: string;
+  light?: boolean;
 }) {
   const { brand } = useBrand();
-  return <>{of ? applyBrandName(of, brand.name) : brand.name}</>;
+  const bankName = bankDisplayName(brand.name);
+  return <>{of ? applyBrandName(of, bankName) : bankName}</>;
 }

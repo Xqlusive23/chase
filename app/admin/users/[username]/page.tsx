@@ -18,7 +18,7 @@ import {
   statusLabel,
   updateTransaction,
 } from "../../../lib/activity";
-import { loadBank, saveBank } from "../../../lib/bank-store";
+import { loadBank, removeAccount, removeCard, saveBank } from "../../../lib/bank-store";
 import { seedCards } from "../../../lib/cards";
 import { formatDateTime, formatMoney, fromDateTimeLocal, toDateTimeLocal } from "../../../lib/format";
 import { signIn } from "../../../lib/session";
@@ -325,6 +325,15 @@ export default function AdminUserPage() {
               <input value={account.number} onChange={(event) => persist({ ...state, accounts: state.accounts.map((item) => item.id === account.id ? { ...item, number: event.target.value } : item) })} className="field" />
               <input defaultValue={account.balance} key={`${account.id}-${account.balance}`} onBlur={(event) => handleSetBalance(account.id, event.target.value)} className="field" />
               <p className="font-semibold text-[var(--navy)]">{formatMoney(account.balance)}</p>
+              {state.accounts.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => persist(removeAccount(state, account.id), "Account removed.")}
+                  className="text-sm font-semibold text-red-700"
+                >
+                  Delete account
+                </button>
+              )}
             </article>
           ))}
         </div>
@@ -353,9 +362,14 @@ export default function AdminUserPage() {
             <article key={card.id} className="panel space-y-3 p-5">
               <input value={card.name} onChange={(event) => persist({ ...state, cards: state.cards.map((item) => item.id === card.id ? { ...item, name: event.target.value } : item) })} className="field" />
               <p className="text-sm text-[var(--muted)]">•••• {card.last4} · EXP {card.expires} · CVV {card.cvv || "•••"}</p>
-              <button type="button" onClick={() => persist({ ...state, cards: state.cards.map((item) => item.id === card.id ? { ...item, locked: !item.locked } : item) }, card.locked ? "Card unfrozen." : "Card frozen.")} className="btn-secondary">
-                {card.locked ? "Unfreeze card" : "Freeze card"}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" onClick={() => persist({ ...state, cards: state.cards.map((item) => item.id === card.id ? { ...item, locked: !item.locked } : item) }, card.locked ? "Card unfrozen." : "Card frozen.")} className="btn-secondary">
+                  {card.locked ? "Unfreeze card" : "Freeze card"}
+                </button>
+                <button type="button" onClick={() => persist(removeCard(state, card.id), "Card removed.")} className="text-sm font-semibold text-red-700">
+                  Delete card
+                </button>
+              </div>
             </article>
           ))}
         </div>

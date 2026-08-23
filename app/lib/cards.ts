@@ -1,4 +1,3 @@
-import { DEFAULT_BRAND, readBrand } from "./brand";
 import type { Card } from "./types";
 
 function digits(count: number) {
@@ -15,7 +14,7 @@ export function makeCard(type: "debit" | "credit", holder: string): Card {
   const year = String(27 + Math.floor(Math.random() * 4));
   return {
     id: `card_${Math.random().toString(36).slice(2, 10)}`,
-    name: type === "credit" ? `${readBrand().name || DEFAULT_BRAND.name} Credit` : "Everyday Debit",
+    name: type === "credit" ? "Credit Card" : "Everyday Debit",
     last4: pan.slice(-4),
     holder,
     expires: `${month}/${year}`,

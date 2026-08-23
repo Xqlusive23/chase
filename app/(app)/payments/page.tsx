@@ -4,7 +4,7 @@ import Link from "next/link";
 import { BrandText } from "../../components/BrandText";
 
 const TOOLS = [
-  { href: "/transfer", title: "Internal transfer", body: "Move money between your Chise Bank accounts." },
+  { href: "/transfer", title: "Internal transfer", body: "Move money between your accounts." },
   { href: "/ach", title: "ACH transfer", body: "Send or receive an electronic bank-to-bank payment." },
   { href: "/wire", title: "Wire transfer", body: "Send a domestic or international wire with routing and SWIFT details." },
   { href: "/deposit", title: "Mobile deposit", body: "Deposit a check by capturing the front image and amount." },

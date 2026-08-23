@@ -3,7 +3,9 @@
 import Link from "next/link";
 import type { Account } from "../lib/types";
 import { accountBalanceLabel, displayBalance, formatMoney, hiddenBalance, maskAccount } from "../lib/format";
+import { labeledAccountName } from "../lib/brand";
 import { BrandText } from "./BrandText";
+import { useBrand } from "./BrandProvider";
 import { IconAlert, IconChevron } from "./Icons";
 
 export function AccountGroup({
@@ -15,6 +17,7 @@ export function AccountGroup({
   accounts: Account[];
   hideBalances?: boolean;
 }) {
+  const { brand } = useBrand();
   if (accounts.length === 0) return null;
 
   return (
@@ -31,7 +34,7 @@ export function AccountGroup({
             <Link key={account.id} href={`/accounts/${account.id}`} className="block px-4 py-4">
               <div className="flex items-start justify-between gap-3">
                 <p className="min-w-0 text-sm font-semibold uppercase tracking-wide text-[var(--ink)]">
-                  <BrandText of={account.name} /> {maskAccount(account.number)}
+                  <BrandText of={labeledAccountName(account.name, account.type, brand.name)} /> {maskAccount(account.number)}
                 </p>
                 <IconChevron className="mt-0.5 h-4 w-4 shrink-0 text-[var(--muted)]" />
               </div>

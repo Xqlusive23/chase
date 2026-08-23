@@ -1,11 +1,16 @@
 import type { StoredUser, UserRole } from "./types";
 import { findBankUsername, listBankUsernames, loadBank, saveBank } from "./bank-store";
 import { DEFAULT_BRAND } from "./brand";
+import { schedulePush } from "./sync";
 
-const USERS_KEY = "northline_users";
+export const USERS_KEY = "northline_users";
 
 export const ADMIN_USERNAME = "admin";
 export const ADMIN_PASSWORD = "northline";
+
+export function readStoredUsers(): StoredUser[] {
+  return readUsers();
+}
 
 function readUsers(): StoredUser[] {
   if (typeof window === "undefined") return [];
@@ -20,6 +25,7 @@ function readUsers(): StoredUser[] {
 
 function writeUsers(users: StoredUser[]) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  schedulePush();
 }
 
 export function listUsers() {
@@ -278,4 +284,5 @@ export function deleteUser(username: string) {
   }
   writeUsers(readUsers().filter((entry) => entry.username !== username));
   localStorage.removeItem(`northline_bank_${username}`);
+  schedulePush();
 }

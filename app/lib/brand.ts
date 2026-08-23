@@ -1,3 +1,5 @@
+import { schedulePush } from "./sync";
+
 export type BrandSettings = {
   name: string;
   logo: string;
@@ -31,19 +33,60 @@ export function readBrand(): BrandSettings {
   }
 }
 
+export function bankDisplayName(name?: string) {
+  const raw = (name || DEFAULT_BRAND.name).trim() || DEFAULT_BRAND.name;
+  if (/\bbank\b/i.test(raw)) return raw;
+  return `${raw} Bank`;
+}
+
+export function brandedCardName(type: "debit" | "credit" | string, name?: string) {
+  return type === "debit" ? `${bankDisplayName(name)} Debit` : `${bankDisplayName(name)} Credit`;
+}
+
+function looksGenericProductName(value: string) {
+  return /chise/i.test(value) || /bank(\s+bank)+/i.test(value) || /^(credit card|everyday debit|credit|debit)$/i.test(value.trim());
+}
+
+export function labeledCardName(cardName: string, type: "debit" | "credit" | string, name?: string) {
+  if (looksGenericProductName(cardName) || !cardName.trim()) return brandedCardName(type, name);
+  return applyBrandName(cardName, bankDisplayName(name));
+}
+
+export function labeledAccountName(accountName: string, type: string, name?: string) {
+  const bank = bankDisplayName(name);
+  if (type === "credit" && looksGenericProductName(accountName)) return `${bank} Credit`;
+  return applyBrandName(accountName, bank);
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 export function applyBrandName(text: string, name: string, previousName = DEFAULT_BRAND.name) {
   if (!text) return text;
-  const replacements = Array.from(new Set([previousName, DEFAULT_BRAND.name, "Chise Bank", "Chise"]))
-    .filter((from) => from && from !== name)
+  const brand = bankDisplayName(name);
+  const replacements = Array.from(new Set([previousName, bankDisplayName(previousName), DEFAULT_BRAND.name, "Chise Bank"]))
+    .filter((from) => from && from !== brand)
     .sort((a, b) => b.length - a.length);
-  return replacements.reduce((next, from) => next.split(from).join(name), text);
+
+  let next = text;
+  for (const from of replacements) {
+    next = next.split(from).join(brand);
+  }
+  if (brand !== "Chise") {
+    next = next.replace(/\bChise\b(?!\s+Bank)/g, brand);
+  }
+  next = next.replace(new RegExp(`(?:${escapeRegExp(brand)}\\s*){2,}`, "g"), `${brand} `);
+  next = next.replace(new RegExp(`(${escapeRegExp(brand)})(?:\\s+Bank)+`, "g"), "$1");
+  return next.replace(/\s+/g, " ").trim();
 }
 
 export function writeBrand(brand: BrandSettings) {
   const previous = readBrand();
   localStorage.setItem(BRAND_KEY, JSON.stringify(brand));
-  rebrandStoredContent(previous.name, brand.name);
+  rebrandStoredContent(previous.name, bankDisplayName(brand.name));
   window.dispatchEvent(new Event("chise-brand"));
+  schedulePush();
 }
 
 export function rebrandStoredContent(previousName: string, nextName: string) {
@@ -60,13 +103,13 @@ export function rebrandStoredContent(previousName: string, nextName: string) {
       if (state.accounts) {
         state.accounts = state.accounts.map((account) => ({
           ...account,
-          name: applyBrandName(account.name, nextName, previousName),
+          name: labeledAccountName(account.name, account.type, nextName),
         }));
       }
       if (state.cards) {
         state.cards = state.cards.map((card) => ({
           ...card,
-          name: applyBrandName(card.name, nextName, previousName),
+          name: labeledCardName(card.name, card.type, nextName),
         }));
       }
       localStorage.setItem(key, JSON.stringify(state));

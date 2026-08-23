@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { BankCard } from "../../components/BankCard";
 import { useBank } from "../../lib/bank-context";
+import { removeCard } from "../../lib/bank-store";
 
 export default function CardsPage() {
   const { state, update } = useBank();
@@ -36,6 +37,16 @@ export default function CardsPage() {
                 className="btn-secondary"
               >
                 {openId === card.id ? "Hide details" : "Show details"}
+              </button>
+              <button
+                onClick={() => {
+                  if (!confirm("Remove this card?")) return;
+                  update((current) => removeCard(current, card.id));
+                  setOpenId((current) => (current === card.id ? null : current));
+                }}
+                className="btn-secondary col-span-2 text-red-700"
+              >
+                Delete card
               </button>
             </div>
           </div>

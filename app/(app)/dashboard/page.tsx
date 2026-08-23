@@ -12,7 +12,10 @@ import {
   IconPiggy,
   IconPlus,
 } from "../../components/Icons";
+import { labeledCardName } from "../../lib/brand";
 import { useBank } from "../../lib/bank-context";
+import { useBrand } from "../../components/BrandProvider";
+import { BrandText } from "../../components/BrandText";
 import { formatLongDate, greetingForNow } from "../../lib/format";
 
 const QUICK_ACTIONS = [
@@ -31,6 +34,7 @@ const OPEN_PRODUCTS = [
 
 export default function DashboardPage() {
   const { state } = useBank();
+  const { brand } = useBrand();
   const cashAccounts = state.accounts.filter((account) => account.type !== "credit");
   const creditAccounts = state.accounts.filter((account) => account.type === "credit");
   const latestIn = [...state.transactions]
@@ -137,7 +141,7 @@ export default function DashboardPage() {
               <div className="p-4">
                 <h2 className="font-bold">Your cards</h2>
                 <p className="mt-1 text-sm text-[var(--muted)]">
-                  {creditCard.name} ending in {creditCard.last4}
+                  <BrandText of={labeledCardName(creditCard.name, creditCard.type, brand.name)} /> ending in {creditCard.last4}
                 </p>
                 <span className="mt-2 inline-flex text-sm font-semibold text-[var(--blue)]">Open cards</span>
               </div>
