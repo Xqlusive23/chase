@@ -30,7 +30,7 @@ export default function TransferPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setMessage("");
     setError("");
@@ -126,7 +126,7 @@ export default function TransferPage() {
       };
     });
 
-    void notifyTransferEmail(noticeFromBank(outgoing, state, brand.name));
+    await notifyTransferEmail(noticeFromBank(outgoing, state, brand.name));
     router.push(`/receipt/${id}`);
   }
 

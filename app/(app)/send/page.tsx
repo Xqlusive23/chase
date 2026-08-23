@@ -24,9 +24,11 @@ export default function SendPage() {
   const [memo, setMemo] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    if (sending) return;
     setError("");
     if (state.accountHold) {
       setError(holdMessage());
@@ -76,6 +78,7 @@ export default function SendPage() {
       recipientDetail: [email.trim(), phone.trim()].filter(Boolean).join(" · ") || undefined,
       recipientEmail: email.trim(),
       fee: 0,
+      memo: memo.trim() || undefined,
       method: `${from.name} balance`,
       transferType: "p2p",
     });
@@ -88,8 +91,12 @@ export default function SendPage() {
       transactions: [outgoing, ...current.transactions],
     }));
 
-    void notifyTransferEmail(noticeFromBank(outgoing, state, brand.name));
-    router.push(`/receipt/${id}`);
+    setSending(true);
+    try {
+      await notifyTransferEmail(noticeFromBank(outgoing, state, brand.name));
+    } finally {
+      router.push(`/receipt/${id}`);
+    }
   }
 
   return (
@@ -162,7 +169,9 @@ export default function SendPage() {
         </label>
         {state.transferPin && <TransferPinField value={pin} onChange={setPin} />}
         {error && <p className="text-sm text-red-700">{error}</p>}
-        <button className="btn-primary w-full">Send payment</button>
+        <button className="btn-primary w-full" disabled={sending}>
+          {sending ? "Sending payment…" : "Send payment"}
+        </button>
       </form>
     </div>
   );

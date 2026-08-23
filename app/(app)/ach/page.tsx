@@ -30,7 +30,7 @@ export default function AchPage() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (state.accountHold) {
       setError(holdMessage());
@@ -106,7 +106,7 @@ export default function AchPage() {
       ],
       transactions: [transaction, ...current.transactions],
     }));
-    void notifyTransferEmail(noticeFromBank(transaction, state, brand.name));
+    await notifyTransferEmail(noticeFromBank(transaction, state, brand.name));
     router.push(`/receipt/${id}`);
   }
 

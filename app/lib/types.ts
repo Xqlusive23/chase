@@ -31,6 +31,7 @@ export type Transaction = {
   fee?: number;
   method?: string;
   transferType?: TransferType;
+  memo?: string;
 };
 
 export type Bill = {

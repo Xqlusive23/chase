@@ -14,11 +14,15 @@ type SendInput = {
   }[];
 };
 
-export function brandedFromAddress(brandName?: string) {
+function fromEmailAddress() {
   const configured = process.env.RESEND_FROM_EMAIL || "Notifications <onboarding@resend.dev>";
-  const email = configured.match(/<([^>]+)>/)?.[1]?.trim() || configured.trim();
-  const name = bankDisplayName(brandName).replace(/[<>\r\n"]/g, "").trim() || "Notifications";
-  return `"${name}" <${email}>`;
+  return configured.match(/<([^>]+)>/)?.[1]?.trim() || configured.trim();
+}
+
+export function brandedFromAddress(brandName?: string) {
+  const email = fromEmailAddress();
+  const name = bankDisplayName(brandName).replace(/[<>\r\n"]/g, "").trim() || "Bank";
+  return /[,;:@()]/.test(name) ? `"${name}" <${email}>` : `${name} <${email}>`;
 }
 
 export async function sendResendEmail(input: SendInput) {
@@ -41,6 +45,7 @@ export async function sendResendEmail(input: SendInput) {
     subject: input.subject,
     html: input.html,
     text: input.text,
+    replyTo: fromEmailAddress(),
     attachments: input.attachments,
   };
   let result = await resend.emails.send(payload);
@@ -48,7 +53,7 @@ export async function sendResendEmail(input: SendInput) {
   if (result.error && testInbox && !usingTestSender) {
     result = await resend.emails.send({
       ...payload,
-      from: "Notifications <onboarding@resend.dev>",
+      from: brandedFromAddress(input.fromName).replace(fromEmailAddress(), "onboarding@resend.dev"),
       to: testInbox,
     });
     if (!result.error) {

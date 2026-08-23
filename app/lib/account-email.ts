@@ -1,4 +1,4 @@
-import { emailHeader, emailShell } from "./email-layout";
+import { EMAIL_NAVY, emailHeader, emailShell } from "./email-layout";
 
 export type AccountNotice = {
   to: string;
@@ -81,5 +81,5 @@ export function accountEmailHtml(notice: AccountNotice) {
     notice.intendedRecipient ? ` Originally addressed to ${escapeHtml(notice.intendedRecipient)}.` : ""
   }`;
 
-  return emailShell(emailHeader("Account notice", notice.brandName, notice.brandNameCid, notice.brandMarkCid), htmlBody, footer);
+  return emailShell(emailHeader("Account notice", notice.brandName, notice.brandNameCid, notice.brandMarkCid, EMAIL_NAVY), htmlBody, footer, EMAIL_NAVY);
 }

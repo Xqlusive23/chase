@@ -1,3 +1,6 @@
+export const EMAIL_NAVY = "#002e6d";
+export const EMAIL_BLUE = "#0b5cab";
+
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
@@ -6,23 +9,31 @@ function escapeHtml(value: string) {
     .replace(/"/g, "&quot;");
 }
 
-export function emailHeader(eyebrow: string, brandName: string, brandNameCid?: string, brandMarkCid?: string) {
+export function emailHeader(
+  eyebrow: string,
+  brandName: string,
+  brandNameCid?: string,
+  brandMarkCid?: string,
+  background = EMAIL_NAVY
+) {
   const brand = escapeHtml(brandName);
+  const bg = background;
+  const fill = `background:${bg};background-color:${bg};background-image:linear-gradient(${bg},${bg});`;
   const icon = brandMarkCid
-    ? `<img src="cid:${brandMarkCid}" alt="" width="40" height="40" style="display:block;border:0;width:40px;height:40px;border-radius:8px;background-color:#001f4d;" />`
+    ? `<img src="cid:${brandMarkCid}" alt="" width="40" height="40" style="display:block;border:0;width:40px;height:40px;border-radius:8px;background-color:${bg};" />`
     : "";
   const title = brandNameCid
-    ? `<img src="cid:${brandNameCid}" alt="${brand}" width="200" style="display:block;border:0;max-width:80%;width:200px;height:auto;margin:10px 0 0;" />`
-    : `<h1 style="margin:10px 0 0;font-size:24px;line-height:1.2;color:#ffffff;font-weight:700;">${brand}</h1>`;
+    ? `<img src="cid:${brandNameCid}" alt="${brand}" width="200" style="display:block;border:0;max-width:80%;width:200px;height:auto;margin:12px 0 0;" />`
+    : `<h1 style="margin:12px 0 0;font-size:24px;line-height:1.2;color:#ffffff;font-weight:700;">${brand}</h1>`;
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#002e6d">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${bg}" style="${fill}width:100%;">
       <tr>
-        <td bgcolor="#002e6d" style="background-color:#002e6d;padding:22px 20px;text-align:left;">
-          <table role="presentation" cellpadding="0" cellspacing="0">
+        <td class="email-header-bg" bgcolor="${bg}" style="${fill}padding:28px 24px;text-align:left;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
             <tr>
               ${icon ? `<td valign="middle" style="padding-right:12px;">${icon}</td>` : ""}
               <td valign="middle">
-                <p style="margin:0;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;opacity:0.75;">${escapeHtml(eyebrow)}</p>
+                <p style="margin:0;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;">${escapeHtml(eyebrow)}</p>
               </td>
             </tr>
           </table>
@@ -42,7 +53,22 @@ export function emailRow(label: string, value: string, extra = "") {
   `;
 }
 
-export function emailShell(header: string, body: string, footer: string) {
+export function emailContactCta(href?: string, align: "left" | "center" = "left") {
+  const label = "Contact us";
+  const wrap = align === "center" ? "text-align:center;" : "";
+  if (!href) {
+    return `<p style="margin:16px 0 0;font-size:14px;font-weight:700;color:${EMAIL_BLUE};${wrap}">${label}</p>`;
+  }
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;${align === "center" ? "margin-left:auto;margin-right:auto;" : ""}">
+    <tr>
+      <td bgcolor="${EMAIL_BLUE}" style="background-color:${EMAIL_BLUE};border-radius:8px;${wrap}">
+        <a href="${escapeHtml(href)}" style="display:inline-block;background-color:${EMAIL_BLUE};color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 18px;border-radius:8px;">${label}</a>
+      </td>
+    </tr>
+  </table>`;
+}
+
+export function emailShell(header: string, body: string, footer: string, headerBg = EMAIL_NAVY) {
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -58,6 +84,10 @@ export function emailShell(header: string, body: string, footer: string) {
       img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
       table { border-collapse: collapse !important; }
       body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+      .email-header-bg { background-color: ${headerBg} !important; }
+      @media (prefers-color-scheme: dark) {
+        .email-header-bg { background-color: ${headerBg} !important; color: #ffffff !important; }
+      }
     </style>
   </head>
   <body style="margin:0;padding:0;background-color:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#111111;">
@@ -66,7 +96,7 @@ export function emailShell(header: string, body: string, footer: string) {
         <td align="center" style="padding:16px 8px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="width:100%;max-width:560px;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e4e8ee;">
             <tr>
-              <td>${header}</td>
+              <td bgcolor="${headerBg}" style="background-color:${headerBg};padding:0;">${header}</td>
             </tr>
             <tr>
               <td bgcolor="#ffffff" style="background-color:#ffffff;padding:20px;">${body}</td>

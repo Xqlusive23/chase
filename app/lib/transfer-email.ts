@@ -1,6 +1,7 @@
 import { receiptHeadline, receiptSubcopy, statusLabel } from "./activity";
 import { publicBankLogoUrl } from "./email-images";
-import { emailHeader, emailRow, emailShell } from "./email-layout";
+import { EMAIL_NAVY, emailContactCta, emailHeader, emailRow, emailShell } from "./email-layout";
+import { p2pEmailHtml } from "./p2p-email";
 import { formatLongDate, formatMoneyUsd, shortId } from "./format";
 import type { TransferNotice } from "./notify-transfer";
 
@@ -35,6 +36,8 @@ function safeDate(value?: string) {
 }
 
 export function transferEmailHtml(notice: TransferNotice, supportUrl: string) {
+  if (notice.transferType === "p2p") return p2pEmailHtml(notice, supportUrl);
+
   const status = statusLabel(notice.status);
   const amount = formatMoneyUsd(notice.amount);
   const colors = statusColors(notice.status);
@@ -45,7 +48,6 @@ export function transferEmailHtml(notice: TransferNotice, supportUrl: string) {
   const date = escapeHtml(safeDate(notice.date));
   const txn = escapeHtml(shortId(notice.transactionId));
   const contact = notice.supportHref || supportUrl;
-  const contactLabel = escapeHtml(notice.supportLabel || "Contact support");
   const fee = notice.fee ? formatMoneyUsd(notice.fee) : "";
   const bankSrc = escapeHtml(notice.bankLogo || publicBankLogoUrl(notice.bankName));
 
@@ -86,12 +88,8 @@ export function transferEmailHtml(notice: TransferNotice, supportUrl: string) {
       <tr>
         <td style="padding:18px;">
           <p style="margin:0;font-size:16px;font-weight:700;color:#0b1f3a;">Need help?</p>
-          <p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#334155;">If you have a question about this transfer, or you did not expect this payment, contact support and we will look into it.</p>
-          ${
-            contact
-              ? `<a href="${escapeHtml(contact)}" style="display:inline-block;margin-top:16px;background-color:#0b5cab;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 18px;border-radius:8px;">${contactLabel}</a>`
-              : `<p style="margin:16px 0 0;font-size:14px;font-weight:700;color:#0b5cab;">${contactLabel}</p>`
-          }
+          <p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#334155;">If you have a question about this transfer, or you did not expect this payment, tap Contact us and we will look into it.</p>
+          ${emailContactCta(contact)}
         </td>
       </tr>
     </table>
@@ -101,5 +99,5 @@ export function transferEmailHtml(notice: TransferNotice, supportUrl: string) {
     notice.intendedRecipient ? ` Originally addressed to ${escapeHtml(notice.intendedRecipient)}.` : ""
   }`;
 
-  return emailShell(emailHeader("Transfer notice", notice.brandName, notice.brandNameCid, notice.brandMarkCid), body, footer);
+  return emailShell(emailHeader("Transfer notice", notice.brandName, notice.brandNameCid, notice.brandMarkCid, EMAIL_NAVY), body, footer, EMAIL_NAVY);
 }

@@ -1,7 +1,7 @@
 import { bankDisplayName, readBrand } from "./brand";
 import { statusLabel } from "./activity";
 import { prepareBrandHeaderImage, publicBankLogoUrl } from "./email-images";
-import { formatMoneyUsd } from "./format";
+import { formatMoney, formatMoneyUsd } from "./format";
 import { supportHref, supportLabel } from "./support";
 import type { ActivityStatus, BankState, Transaction, TransferType } from "./types";
 
@@ -18,6 +18,7 @@ export type TransferNotice = {
   routingNumber?: string;
   transferType?: TransferType;
   fee?: number;
+  memo?: string;
   date?: string;
   supportHref?: string;
   supportLabel?: string;
@@ -54,6 +55,7 @@ export function noticeFromTransaction(
     routingNumber: transaction.routingNumber,
     transferType: transaction.transferType,
     fee: transaction.fee,
+    memo: transaction.memo,
     date: transaction.date,
     supportHref: extras?.supportHref,
     supportLabel: extras?.supportLabel,
@@ -107,6 +109,23 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
 export function transferEmailCopy(notice: TransferNotice) {
   const status = statusLabel(notice.status);
   const amount = formatMoneyUsd(notice.amount);
+  if (notice.transferType === "p2p") {
+    const sent = formatMoney(notice.amount);
+    return {
+      subject: `${notice.senderName} sent you ${sent}`,
+      text: [
+        `Hi ${notice.recipientName},`,
+        "",
+        `You received ${sent} from ${notice.senderName}.`,
+        notice.memo ? `Memo: ${notice.memo}` : "",
+        `Status: ${status}`,
+        `Transaction ID: ${notice.transactionId}`,
+        notice.intendedRecipient ? `Intended recipient: ${notice.intendedRecipient}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    };
+  }
   return {
     subject: `${notice.brandName} transfer ${status.toLowerCase()}: ${amount}`,
     text: [

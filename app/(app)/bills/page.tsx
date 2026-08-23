@@ -20,7 +20,7 @@ export default function BillsPage() {
   const [pin, setPin] = useState("");
   const [message, setMessage] = useState("");
 
-  function payBill(billId: string) {
+  async function payBill(billId: string) {
     if (state.accountHold) {
       setMessage(holdMessage());
       return;
@@ -68,7 +68,7 @@ export default function BillsPage() {
       bills: current.bills.map((item) => (item.id === billId ? { ...item, status: "paid" } : item)),
       transactions: [transaction, ...current.transactions],
     }));
-    void notifyTransferEmail(noticeFromBank(transaction, state, brand.name));
+    await notifyTransferEmail(noticeFromBank(transaction, state, brand.name));
     router.push(`/receipt/${id}`);
   }
 
