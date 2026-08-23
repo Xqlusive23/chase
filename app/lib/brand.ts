@@ -1,3 +1,4 @@
+import type { Account, Card } from "./types";
 import { schedulePush } from "./sync";
 
 export type BrandSettings = {
@@ -97,8 +98,8 @@ export function rebrandStoredContent(previousName: string, nextName: string) {
     if (!raw) continue;
     try {
       const state = JSON.parse(raw) as {
-        accounts?: { name: string }[];
-        cards?: { name: string }[];
+        accounts?: Account[];
+        cards?: Card[];
       };
       if (state.accounts) {
         state.accounts = state.accounts.map((account) => ({
