@@ -178,13 +178,13 @@ function syncLinkedStatus<T extends { id: string; status: ActivityStatus }>(item
 
 export function currentAccountStatus(state: BankState): ActivityStatus {
   if (state.accountActivityStatus) return state.accountActivityStatus;
-  const unique = [...new Set(state.transactions.map((item) => item.status))];
-  if (unique.length === 1) return unique[0];
+  const first = state.transactions[0]?.status;
+  if (first && state.transactions.every((item) => item.status === first)) return first;
   return "pending";
 }
 
 export function setAccountActivityStatus(state: BankState, status: ActivityStatus): BankState {
-  return state.transactions.reduce(
+  return state.transactions.reduce<BankState>(
     (current, item) => setTransferStatus(current, item.id, status),
     { ...state, accountActivityStatus: status }
   );

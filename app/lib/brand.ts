@@ -33,7 +33,7 @@ export function readBrand(): BrandSettings {
 
 export function applyBrandName(text: string, name: string, previousName = DEFAULT_BRAND.name) {
   if (!text) return text;
-  const replacements = [...new Set([previousName, DEFAULT_BRAND.name, "Chise Bank", "Chise"])]
+  const replacements = Array.from(new Set([previousName, DEFAULT_BRAND.name, "Chise Bank", "Chise"]))
     .filter((from) => from && from !== name)
     .sort((a, b) => b.length - a.length);
   return replacements.reduce((next, from) => next.split(from).join(name), text);
