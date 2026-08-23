@@ -50,7 +50,7 @@ export default function AdminBrandingPage() {
     const result = await pushStore();
     setSaving(false);
     if (!result.ok) {
-      setError(result.error || "Saved on this browser only. Add Vercel KV to share the name image with other browsers.");
+      setError(result.error || "Saved on this browser only. Add Upstash Redis in Vercel Marketplace to share the name image with other browsers.");
       return;
     }
     setSaved("Branding saved for every browser. Open the site on another device and refresh.");
@@ -180,7 +180,7 @@ export default function AdminBrandingPage() {
         </div>
         {synced === false && (
           <p className="text-sm text-amber-800">
-            Other browsers will not see this name image until you add Vercel KV (Storage → KV) and redeploy.
+            Other browsers will not see this name image until you add Upstash Redis from the Vercel Marketplace and redeploy.
           </p>
         )}
         {error && <p className="text-sm text-red-700">{error}</p>}

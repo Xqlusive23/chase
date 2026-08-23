@@ -59,7 +59,7 @@ export async function writeServerStore(store: AppStore) {
   }
 
   if (process.env.VERCEL) {
-    throw new Error("Add Vercel KV so branding and members sync across devices.");
+    throw new Error("Add Upstash Redis (Vercel Marketplace) so branding and members sync across devices.");
   }
 
   await fs.mkdir(path.dirname(FILE), { recursive: true });
