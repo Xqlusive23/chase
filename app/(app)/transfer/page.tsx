@@ -23,6 +23,7 @@ export default function TransferPage() {
   const [email, setEmail] = useState("");
   const [bankName, setBankName] = useState("");
   const [routingNumber, setRoutingNumber] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
   const [amount, setAmount] = useState("");
   const [memo, setMemo] = useState("");
   const [pin, setPin] = useState("");
@@ -61,16 +62,17 @@ export default function TransferPage() {
       setError("Choose a different destination or enter an external recipient.");
       return;
     }
-    if (external.trim() && (!bankName.trim() || !routingNumber.trim())) {
-      setError("Choose the recipient bank so the routing number can be filled in.");
+    if (external.trim() && (!bankName.trim() || !routingNumber.trim() || !accountNumber.trim())) {
+      setError("Choose the recipient bank and enter the account number.");
       return;
     }
 
     const now = new Date().toISOString();
     const id = `txn_${crypto.randomUUID()}`;
+    const destinationAccount = state.accounts.find((account) => account.id === toId);
     const destination = external.trim()
       ? external.trim()
-      : state.accounts.find((account) => account.id === toId)?.name ?? "account";
+      : destinationAccount?.name ?? "account";
     const note = memo.trim() ? ` · ${memo.trim()}` : "";
     const accountStatus = currentAccountStatus(state);
     const outgoing = createActivity({
@@ -87,6 +89,7 @@ export default function TransferPage() {
       recipientDetail: [email.trim(), bankName.trim()].filter(Boolean).join(" · ") || undefined,
       recipientEmail: email.trim(),
       recipientBank: bankName.trim() || undefined,
+      recipientAccount: external.trim() ? accountNumber.trim() : destinationAccount?.number,
       routingNumber: routingNumber.trim() || undefined,
       fee: 0,
       method: `${from.name} balance`,
@@ -176,14 +179,25 @@ export default function TransferPage() {
           />
         </label>
         {external.trim() && (
-          <BankSelect
-            bankName={bankName}
-            routingNumber={routingNumber}
-            onChange={(next) => {
-              setBankName(next.bankName);
-              setRoutingNumber(next.routingNumber);
-            }}
-          />
+          <>
+            <BankSelect
+              bankName={bankName}
+              routingNumber={routingNumber}
+              onChange={(next) => {
+                setBankName(next.bankName);
+                setRoutingNumber(next.routingNumber);
+              }}
+            />
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-[var(--muted)]">Account number</span>
+              <input
+                value={accountNumber}
+                onChange={(event) => setAccountNumber(event.target.value)}
+                placeholder="Recipient account number"
+                className="field"
+              />
+            </label>
+          </>
         )}
         <label className="block">
           <span className="mb-1 block text-sm font-medium text-[var(--muted)]">Amount</span>

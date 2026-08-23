@@ -132,7 +132,7 @@ export default function AdminBrandingPage() {
 
         <div>
           <span className="mb-1 block text-sm text-[var(--muted)]">Logo</span>
-          <p className="mb-2 text-sm text-[var(--muted)]">This mark stays on the right of the name and is used as the icon when the site is saved as an app.</p>
+          <p className="mb-2 text-sm text-[var(--muted)]">This mark stays on the right of the name. If you skip it, the name image is used as the browser and home-screen icon.</p>
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" onClick={() => logoRef.current?.click()} className="btn-secondary">
               Upload logo

@@ -22,13 +22,21 @@ export default function ReceiptPage() {
   }
 
   const account = state.accounts.find((entry) => entry.id === item.accountId);
+  const wire = state.wires?.find((entry) => entry.id === item.id);
+  const ach = state.achs?.find((entry) => entry.id === item.id);
+  const receipt = {
+    ...item,
+    recipientBank: item.recipientBank || wire?.bankName,
+    recipientAccount: item.recipientAccount || wire?.accountNumber || ach?.accountNumber,
+    routingNumber: item.routingNumber || wire?.routingNumber || ach?.routingNumber,
+  };
 
   return (
     <div className="space-y-5">
       <Link href="/transactions" className="text-sm font-semibold text-[var(--blue)]">
         ← Activity
       </Link>
-      <PaymentReceipt item={item} account={account} />
+      <PaymentReceipt item={receipt} account={account} />
     </div>
   );
 }

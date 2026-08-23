@@ -51,11 +51,19 @@ export function PaymentReceipt({
 
       <dl className="mt-6 divide-y divide-[var(--line)]">
         <Row label="To">
-          <p className="font-semibold">{item.recipient || item.description}</p>
-          {item.recipientEmail && <p className="text-sm text-[var(--muted)]">{item.recipientEmail}</p>}
-          {item.recipientBank && <p className="text-sm text-[var(--muted)]">{item.recipientBank}</p>}
-          {item.routingNumber && <p className="text-sm text-[var(--muted)]">Routing {item.routingNumber}</p>}
-          {!item.recipientEmail && item.recipientDetail && <p className="text-sm text-[var(--muted)]">{item.recipientDetail}</p>}
+          {item.recipientBank || item.recipientAccount || item.routingNumber ? (
+            <>
+              {item.recipientBank && <p className="font-semibold">{item.recipientBank}</p>}
+              {item.recipientAccount && <p className="text-sm text-[var(--muted)]">Account {item.recipientAccount}</p>}
+              {item.routingNumber && <p className="text-sm text-[var(--muted)]">Routing {item.routingNumber}</p>}
+              {item.recipient && <p className="mt-1 text-sm text-[var(--muted)]">{item.recipient}</p>}
+            </>
+          ) : (
+            <>
+              <p className="font-semibold">{item.recipient || item.description}</p>
+              {item.recipientDetail && <p className="text-sm text-[var(--muted)]">{item.recipientDetail}</p>}
+            </>
+          )}
         </Row>
         <Row label="Transaction ID">{shortId(item.id)}</Row>
         <Row label="Date">{formatReceiptStamp(item.date)}</Row>

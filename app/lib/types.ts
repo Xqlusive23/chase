@@ -26,6 +26,7 @@ export type Transaction = {
   recipientDetail?: string;
   recipientEmail?: string;
   recipientBank?: string;
+  recipientAccount?: string;
   routingNumber?: string;
   fee?: number;
   method?: string;
@@ -106,7 +107,7 @@ export type AchTransfer = {
   status: ActivityStatus;
 };
 
-export type SupportChannel = "whatsapp" | "email" | "instagram" | "facebook" | "telegram" | "other";
+export type SupportChannel = "phone" | "whatsapp" | "email" | "instagram" | "facebook" | "telegram" | "other";
 
 export type MemberSupport = {
   channel: SupportChannel;

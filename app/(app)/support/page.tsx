@@ -49,11 +49,7 @@ function SupportChat() {
       <BackLink href="/profile" label="Settings" />
       <div>
         <h1 className="page-title">{live ? "Live support" : "Contact support"}</h1>
-        <p className="page-sub">
-          {contact?.value
-            ? "Your admin set a preferred contact for this profile."
-            : "Message us here, or start a live chat."}
-        </p>
+        <p className="page-sub">Message us here, or start a live chat.</p>
       </div>
 
       {contact?.value && href && (

@@ -77,6 +77,7 @@ export default function AchPage() {
       recipientDetail: `${form.email.trim()} · ${form.bankName.trim()}`,
       recipientEmail: form.email.trim(),
       recipientBank: form.bankName.trim(),
+      recipientAccount: form.accountNumber.trim(),
       routingNumber: form.routingNumber.trim(),
       fee: 0,
       method: `${from.name} balance`,

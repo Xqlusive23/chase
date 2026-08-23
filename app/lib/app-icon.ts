@@ -1,4 +1,4 @@
-import { brandMark, type BrandSettings } from "./brand";
+import { bankDisplayName, brandMark, type BrandSettings } from "./brand";
 
 function setLink(rel: string, href: string, extras?: { sizes?: string; type?: string }) {
   let link = document.head.querySelector(`link[data-app-icon="${rel}"]`) as HTMLLinkElement | null;
@@ -71,21 +71,28 @@ async function squareIcon(src: string | undefined, name: string, size: number) {
 
 export async function applyAppIcons(brand: BrandSettings) {
   if (typeof document === "undefined") return;
-  const src = brand.logo || undefined;
+  const src = brand.logo || brand.nameImage || undefined;
+  const title = bankDisplayName(brand.name);
   const [icon192, icon512] = await Promise.all([
-    squareIcon(src, brand.name, 192),
-    squareIcon(src, brand.name, 512),
+    squareIcon(src, title, 192),
+    squareIcon(src, title, 512),
   ]);
 
+  document.head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]').forEach((node) => {
+    const link = node as HTMLLinkElement;
+    link.href = icon192;
+    link.type = "image/png";
+  });
   setLink("icon", icon192, { sizes: "192x192", type: "image/png" });
+  setLink("shortcut icon", icon192, { type: "image/png" });
   setLink("apple-touch-icon", icon192, { sizes: "180x180" });
   setMeta("apple-mobile-web-app-capable", "yes");
-  setMeta("apple-mobile-web-app-title", brand.name);
+  setMeta("apple-mobile-web-app-title", title);
   setMeta("theme-color", "#0b1f3a");
 
   const manifest = {
-    name: brand.name,
-    short_name: brand.name,
+    name: title,
+    short_name: title,
     description: "Personal banking with accounts, payments, and activity in one place.",
     start_url: "/",
     scope: "/",

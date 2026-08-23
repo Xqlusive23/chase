@@ -22,7 +22,7 @@ import { loadBank, removeAccount, removeCard, saveBank } from "../../../lib/bank
 import { seedCards } from "../../../lib/cards";
 import { formatDateTime, formatMoney, fromDateTimeLocal, toDateTimeLocal } from "../../../lib/format";
 import { signIn } from "../../../lib/session";
-import { SUPPORT_CHANNELS } from "../../../lib/support";
+import { SUPPORT_CHANNELS, supportPlaceholder } from "../../../lib/support";
 import { readBrand } from "../../../lib/brand";
 import { notifyAccountEmail } from "../../../lib/notify-account";
 import { isValidEmail, noticeFromBank, notifyTransferEmail } from "../../../lib/notify-transfer";
@@ -300,7 +300,7 @@ export default function AdminUserPage() {
             ))}
           </select>
         </Field>
-        <Field label="Number, email, or handle">
+        <Field label={state.support?.channel === "phone" ? "Mobile number" : "Number, email, or handle"}>
           <input
             value={state.support?.value ?? ""}
             onChange={(event) =>
@@ -310,7 +310,7 @@ export default function AdminUserPage() {
               })
             }
             className="field"
-            placeholder="WhatsApp number, Gmail, or @handle"
+            placeholder={supportPlaceholder(state.support?.channel)}
           />
         </Field>
       </section>

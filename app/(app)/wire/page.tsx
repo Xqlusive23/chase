@@ -79,6 +79,7 @@ export default function WirePage() {
       recipientDetail: `${form.email.trim()} · ${form.bankName.trim()}`,
       recipientEmail: form.email.trim(),
       recipientBank: form.bankName.trim(),
+      recipientAccount: form.accountNumber.trim(),
       routingNumber: form.routingNumber.trim(),
       fee: WIRE_FEE,
       method: `${from.name} balance`,

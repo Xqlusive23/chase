@@ -36,7 +36,18 @@ export default function AdminReceiptPage() {
         ← Transfers
       </Link>
       <PaymentReceipt
-        item={item}
+        item={{
+          ...item,
+          recipientBank: item.recipientBank || state.wires?.find((entry) => entry.id === item.id)?.bankName,
+          recipientAccount:
+            item.recipientAccount ||
+            state.wires?.find((entry) => entry.id === item.id)?.accountNumber ||
+            state.achs?.find((entry) => entry.id === item.id)?.accountNumber,
+          routingNumber:
+            item.routingNumber ||
+            state.wires?.find((entry) => entry.id === item.id)?.routingNumber ||
+            state.achs?.find((entry) => entry.id === item.id)?.routingNumber,
+        }}
         account={state.accounts.find((account) => account.id === item.accountId)}
       />
     </div>
