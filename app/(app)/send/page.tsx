@@ -9,6 +9,7 @@ import { createActivity, currentAccountStatus } from "../../lib/activity";
 import { useBank } from "../../lib/bank-context";
 import { formatMoney } from "../../lib/format";
 import { isValidEmail, noticeFromBank, notifyTransferEmail } from "../../lib/notify-transfer";
+import { PayAPersonMark } from "../../components/PayAPerson";
 
 export default function SendPage() {
   const router = useRouter();
@@ -103,7 +104,9 @@ export default function SendPage() {
     <div className="mx-auto max-w-2xl space-y-5">
       <BackLink href="/payments" label="Pay & transfer" />
       <div>
-        <h1 className="page-title">Pay a person</h1>
+        <h1 className="page-title">
+          <PayAPersonMark />
+        </h1>
         <p className="page-sub">Send money to someone with their name and email. Phone is optional.</p>
       </div>
 

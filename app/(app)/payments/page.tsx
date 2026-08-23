@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { BrandText } from "../../components/BrandText";
+import { PayAPersonMark } from "../../components/PayAPerson";
 
 const TOOLS = [
-  { href: "/send", title: "Pay a person", body: "Send money to someone with their name and email." },
+  { href: "/send", title: "p2p" as const, body: "Send money to someone with their name and email." },
   { href: "/transfer", title: "Internal transfer", body: "Move money between your accounts." },
   { href: "/ach", title: "ACH transfer", body: "Send or receive an electronic bank-to-bank payment." },
   { href: "/wire", title: "Wire transfer", body: "Send a domestic or international wire with routing and SWIFT details." },
@@ -23,7 +24,9 @@ export default function PaymentsPage() {
       <div className="grid gap-4 md:grid-cols-2">
         {TOOLS.map((tool) => (
           <Link key={tool.href} href={tool.href} className="panel p-5 transition-transform duration-200 hover:-translate-y-0.5">
-            <h2 className="text-lg font-semibold text-[var(--navy)]">{tool.title}</h2>
+            <h2 className="text-lg font-semibold text-[var(--navy)]">
+              {tool.title === "p2p" ? <PayAPersonMark /> : tool.title}
+            </h2>
             <p className="mt-2 text-sm text-[var(--muted)]">
               <BrandText of={tool.body} />
             </p>

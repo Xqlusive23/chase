@@ -16,12 +16,13 @@ import {
 import { statusLabel } from "../../lib/activity";
 import { useBank } from "../../lib/bank-context";
 import { formatDate, formatLongDate, formatSignedMoney, greetingForNow, maskAccount } from "../../lib/format";
+import { PayAPersonMark } from "../../components/PayAPerson";
 
 const RECENT_LIMIT = 5;
 
 const QUICK_ACTIONS = [
   { href: "/payments", label: "+", plus: true },
-  { href: "/send", label: "Pay a person" },
+  { href: "/send", label: "p2p" },
   { href: "/ach", label: "Send money" },
   { href: "/deposit", label: "Deposit checks" },
   { href: "/bills", label: "Pay bills" },
@@ -83,7 +84,7 @@ export default function DashboardPage() {
             className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--blue)] bg-white px-4 py-2 text-sm font-semibold text-[var(--blue)]"
           >
             {action.plus && <IconPlus />}
-            {action.label}
+            {action.label === "p2p" ? <PayAPersonMark /> : action.label}
           </Link>
         ))}
       </div>
@@ -182,7 +183,7 @@ export default function DashboardPage() {
             <h2 className="text-lg font-bold">Move money</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
               <Link href="/send" className="rounded-xl bg-[var(--page)] px-4 py-3 font-semibold text-[var(--navy)]">
-                Pay a person
+                <PayAPersonMark />
               </Link>
               <Link href="/wire" className="rounded-xl bg-[var(--page)] px-4 py-3 font-semibold text-[var(--navy)]">
                 Wire transfer
