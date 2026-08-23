@@ -145,7 +145,7 @@ export function transferEmailCopy(notice: TransferNotice) {
     };
   }
   return {
-    subject: `${notice.brandName} transfer ${status.toLowerCase()}: ${amount}`,
+    subject: `${notice.brandName} transfer ${status}: ${amount}`,
     text: [
       `Hi ${notice.recipientName},`,
       "",

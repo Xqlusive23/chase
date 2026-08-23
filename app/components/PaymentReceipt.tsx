@@ -94,7 +94,7 @@ export function PaymentReceipt({
       </div>
 
       <p className="mt-8 text-center text-xs text-[var(--muted)]">
-        This payment is {statusLabel(item.status).toLowerCase()}
+        This payment is {statusLabel(item.status)}
         {item.status === "posted" ? "." : " and will update when the status changes."} Thank you for banking with{" "}
         <BrandText />.
       </p>

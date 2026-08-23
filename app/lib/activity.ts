@@ -33,10 +33,10 @@ export function statusLabel(status: ActivityStatus) {
 }
 
 export function receiptHeadline(status: ActivityStatus) {
-  if (status === "hold") return "Payment on hold";
-  if (status === "pending") return "Payment pending";
-  if (status === "processing") return "Payment processing";
-  return "Payment completed";
+  if (status === "hold") return "Payment Hold";
+  if (status === "pending") return "Payment Pending";
+  if (status === "processing") return "Payment Processing";
+  return "Payment Posted";
 }
 
 export function receiptSubcopy(status: ActivityStatus) {
