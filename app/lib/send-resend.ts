@@ -57,7 +57,7 @@ export async function sendResendEmail(input: SendInput) {
 
   return {
     ok: true as const,
-    deliveredTo,
+    deliveredTo: deliverTo,
     intendedRecipient: deliverTo.toLowerCase() === intended ? undefined : input.to.trim(),
   };
 }
