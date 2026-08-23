@@ -194,6 +194,9 @@ export default function AdminBrandingPage() {
               onChange={(event) => readFile(event.target.files?.[0], (value) => setP2pEmail({ ...p2pEmail, nameImage: value }))}
             />
             <div className="mt-3 rounded-lg px-4 py-3 text-center" style={{ backgroundColor: p2pEmail.headerColor }}>
+              <p className="mb-2 text-[15px] font-extrabold uppercase tracking-[0.16em] text-white">
+                {p2pEmail.eyebrow || "You received money"}
+              </p>
               {p2pEmail.nameImage || nameImage ? (
                 <img
                   src={p2pEmail.nameImage || nameImage}

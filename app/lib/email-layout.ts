@@ -26,8 +26,10 @@ export function emailHeader(
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${bg}" style="${fill}width:100%;">
       <tr>
-        <td class="email-header-bg" bgcolor="${bg}" align="center" style="${fill}padding:12px 18px 14px;text-align:center;">
-          <p style="margin:0;font-size:15px;line-height:1.25;letter-spacing:0.16em;text-transform:uppercase;color:#ffffff !important;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,0.55);">${escapeHtml(eyebrow)}</p>
+        <td class="email-header-bg" bgcolor="${bg}" align="center" style="${fill}padding:12px 18px 14px;text-align:center;color:#ffffff;">
+          <p class="email-header-label" style="margin:0;font-size:15px;line-height:1.25;letter-spacing:0.16em;text-transform:uppercase;color:#ffffff;font-weight:800;">
+            <span class="email-header-label" style="color:#ffffff;-webkit-text-fill-color:#ffffff;">${escapeHtml(eyebrow)}</span>
+          </p>
           ${title}
         </td>
       </tr>
@@ -77,8 +79,10 @@ export function emailShell(header: string, body: string, footer: string, headerB
       table { border-collapse: collapse !important; }
       body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
       .email-header-bg { background-color: ${headerBg} !important; color: #ffffff !important; }
+      .email-header-label, .email-header-label span { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
       @media (prefers-color-scheme: dark) {
         .email-header-bg { background-color: ${headerBg} !important; color: #ffffff !important; }
+        .email-header-label, .email-header-label span { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
       }
     </style>
   </head>
