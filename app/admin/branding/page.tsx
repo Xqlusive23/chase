@@ -13,6 +13,7 @@ export default function AdminBrandingPage() {
   const { synced } = useStoreSync();
   const logoRef = useRef<HTMLInputElement>(null);
   const nameImageRef = useRef<HTMLInputElement>(null);
+  const p2pNameImageRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(brand.name);
   const [logo, setLogo] = useState(brand.logo);
   const [nameImage, setNameImage] = useState(brand.nameImage);
@@ -167,8 +168,45 @@ export default function AdminBrandingPage() {
           <div>
             <h2 className="text-lg font-semibold text-[var(--navy)]">Pay a person email</h2>
             <p className="mt-1 text-sm text-[var(--muted)]">
-              Change the wording and header color for payment-received mail. Use placeholders: {P2P_PLACEHOLDERS.join(", ")}.
+              Change the wording, header color, and name image for payment-received mail. Use placeholders: {P2P_PLACEHOLDERS.join(", ")}.
             </p>
+          </div>
+          <div>
+            <span className="mb-1 block text-sm text-[var(--muted)]">Pay a person name image</span>
+            <p className="mb-2 text-sm text-[var(--muted)]">
+              This graphic replaces the default website name image on Pay a person emails only.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" onClick={() => p2pNameImageRef.current?.click()} className="btn-secondary">
+                Upload Pay a person name image
+              </button>
+              {p2pEmail.nameImage && (
+                <button type="button" onClick={() => setP2pEmail({ ...p2pEmail, nameImage: "" })} className="text-sm font-semibold text-red-700">
+                  Use default name image
+                </button>
+              )}
+            </div>
+            <input
+              ref={p2pNameImageRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(event) => readFile(event.target.files?.[0], (value) => setP2pEmail({ ...p2pEmail, nameImage: value }))}
+            />
+            <div className="mt-3 rounded-lg px-4 py-3 text-center" style={{ backgroundColor: p2pEmail.headerColor }}>
+              {p2pEmail.nameImage || nameImage ? (
+                <img
+                  src={p2pEmail.nameImage || nameImage}
+                  alt=""
+                  className={`mx-auto h-10 w-auto max-w-[200px] object-contain ${p2pEmail.nameImage ? "" : "brightness-0 invert"}`}
+                />
+              ) : (
+                <p className="text-lg font-semibold text-white">{name || DEFAULT_BRAND.name}</p>
+              )}
+              <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-white">
+                {p2pEmail.nameImage ? "Pay a person name image" : "Default name image"}
+              </p>
+            </div>
           </div>
           <label className="block">
             <span className="mb-1 block text-sm text-[var(--muted)]">Subject</span>
@@ -217,6 +255,16 @@ export default function AdminBrandingPage() {
               value={p2pEmail.amountLine}
               onChange={(event) => setP2pEmail({ ...p2pEmail, amountLine: event.target.value })}
               className="field"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm text-[var(--muted)]">Description above Contact us</span>
+            <textarea
+              value={p2pEmail.contactNote}
+              onChange={(event) => setP2pEmail({ ...p2pEmail, contactNote: event.target.value })}
+              rows={3}
+              className="field min-h-[88px]"
+              placeholder="Shown just above the Contact us button"
             />
           </label>
           <label className="block">

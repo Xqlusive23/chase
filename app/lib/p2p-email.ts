@@ -80,6 +80,11 @@ export function p2pEmailHtml(notice: TransferNotice, supportUrl: string) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;">
       <tr>
         <td align="center">
+          ${
+            template.contactNote.trim()
+              ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#334155;text-align:center;">${fillP2pHtml(template.contactNote, vars).replace(/\n/g, "<br />")}</p>`
+              : ""
+          }
           ${emailContactCta(contact, "center")}
         </td>
       </tr>

@@ -5,6 +5,8 @@ export type P2pEmailTemplate = {
   amountLine: string;
   footer: string;
   headerColor: string;
+  nameImage: string;
+  contactNote: string;
 };
 
 export const DEFAULT_P2P_EMAIL: P2pEmailTemplate = {
@@ -14,6 +16,8 @@ export const DEFAULT_P2P_EMAIL: P2pEmailTemplate = {
   amountLine: "{{sender}} sent you",
   footer: "This payment notice was sent by {{brand}}. If you did not expect this, tap Contact us.",
   headerColor: "#0b5cab",
+  nameImage: "",
+  contactNote: "If you did not expect this payment, tap Contact us.",
 };
 
 export const P2P_PLACEHOLDERS = [
@@ -67,11 +71,13 @@ export function normalizeP2pEmail(value?: Partial<P2pEmailTemplate> | null): P2p
     amountLine: value?.amountLine?.trim() || DEFAULT_P2P_EMAIL.amountLine,
     footer: value?.footer?.trim() || DEFAULT_P2P_EMAIL.footer,
     headerColor: sanitizeHeaderColor(value?.headerColor),
+    nameImage: value?.nameImage || "",
+    contactNote: value?.contactNote ?? DEFAULT_P2P_EMAIL.contactNote,
   };
 }
 
 export function p2pTemplateBlocked(template: P2pEmailTemplate) {
-  const text = Object.values(template).join(" ").toLowerCase();
+  const text = [template.subject, template.eyebrow, template.intro, template.amountLine, template.footer, template.contactNote].join(" ").toLowerCase();
   if (/\bzelle\b/.test(text) || /\bchase\b/.test(text) || /jpmorgan|jp\s*morgan/.test(text)) {
     return "That wording is not allowed on Pay a person emails.";
   }

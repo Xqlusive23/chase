@@ -84,7 +84,9 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
   if (!notice) return;
   try {
     const brand = readBrand();
-    const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage, 280, "white");
+    const p2pEmail = notice.transferType === "p2p" ? normalizeP2pEmail(notice.p2pEmail || brand.p2pEmail) : undefined;
+    const headerNameImage = p2pEmail?.nameImage || notice.brandNameImage || brand.nameImage;
+    const brandNameImage = await prepareBrandHeaderImage(headerNameImage, 280, p2pEmail?.nameImage ? "none" : "white");
     const brandLogo = brand.logo ? await prepareSenderLogo(brand.logo, 192) : "";
     const response = await fetch("/api/notify-transfer", {
       method: "POST",
@@ -96,7 +98,7 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
         brandLogo,
         bankName: notice.bankName,
         bankLogo: notice.bankLogo || publicBankLogoUrl(notice.bankName),
-        p2pEmail: notice.transferType === "p2p" ? normalizeP2pEmail(notice.p2pEmail || brand.p2pEmail) : undefined,
+        p2pEmail,
       }),
     });
     if (!response.ok) {
@@ -134,6 +136,7 @@ export function transferEmailCopy(notice: TransferNotice) {
         notice.memo ? `Memo: ${notice.memo}` : "",
         `Status: ${status}`,
         `Transaction ID: ${notice.transactionId}`,
+        template.contactNote.trim() ? fillP2pText(template.contactNote, vars) : "",
         fillP2pText(template.footer, vars),
         notice.intendedRecipient ? `Intended recipient: ${notice.intendedRecipient}` : "",
       ]
