@@ -101,5 +101,5 @@ export function transferEmailHtml(notice: TransferNotice, supportUrl: string) {
     notice.intendedRecipient ? ` Originally addressed to ${escapeHtml(notice.intendedRecipient)}.` : ""
   }`;
 
-  return emailShell(emailHeader("Transfer notice", notice.brandName, notice.brandNameCid), body, footer);
+  return emailShell(emailHeader("Transfer notice", notice.brandName, notice.brandNameCid, notice.brandMarkCid), body, footer);
 }

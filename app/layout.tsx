@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   applicationName: "Online banking",
   themeColor: "#0b1f3a",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [{ url: "/api/brand-icon", type: "image/png" }],
+    apple: "/api/brand-icon",
+  },
   appleWebApp: {
     capable: true,
     title: "Online banking",

@@ -6,7 +6,9 @@ export type AccountNotice = {
   brandName: string;
   kind: "pending" | "approved";
   brandNameImage?: string;
+  brandLogo?: string;
   brandNameCid?: string;
+  brandMarkCid?: string;
   intendedRecipient?: string;
   loginHref?: string;
 };
@@ -79,5 +81,5 @@ export function accountEmailHtml(notice: AccountNotice) {
     notice.intendedRecipient ? ` Originally addressed to ${escapeHtml(notice.intendedRecipient)}.` : ""
   }`;
 
-  return emailShell(emailHeader("Account notice", notice.brandName, notice.brandNameCid), htmlBody, footer);
+  return emailShell(emailHeader("Account notice", notice.brandName, notice.brandNameCid, notice.brandMarkCid), htmlBody, footer);
 }

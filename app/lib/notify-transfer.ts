@@ -25,6 +25,7 @@ export type TransferNotice = {
   brandNameImage?: string;
   brandLogo?: string;
   brandNameCid?: string;
+  brandMarkCid?: string;
   bankLogoCid?: string;
 };
 
@@ -79,7 +80,9 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
   if (!notice) return;
   try {
     const brand = readBrand();
+    const mark = brand.logo || brand.nameImage;
     const brandNameImage = await prepareBrandHeaderImage(notice.brandNameImage || brand.nameImage, 360, "white");
+    const brandLogo = await prepareBrandHeaderImage(mark, 180, brand.logo ? "none" : "white");
     const response = await fetch("/api/notify-transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -87,7 +90,7 @@ export async function notifyTransferEmail(notice: TransferNotice | null) {
         ...notice,
         brandName: bankDisplayName(notice.brandName || brand.name),
         brandNameImage,
-        brandLogo: notice.brandLogo || brand.logo,
+        brandLogo,
         bankName: notice.bankName,
         bankLogo: notice.bankLogo || publicBankLogoUrl(notice.bankName),
       }),

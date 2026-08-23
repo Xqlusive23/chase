@@ -13,6 +13,16 @@ function parseDataUrl(value: string): { content: string; contentType: string } |
   return { contentType: match[1] || "image/png", content: match[2].replace(/\s/g, "") };
 }
 
+export function dataUrlToBytes(value: string | undefined) {
+  if (!value?.startsWith("data:")) return null;
+  const parsed = parseDataUrl(value);
+  if (!parsed || parsed.content.length < 32) return null;
+  return {
+    contentType: parsed.contentType,
+    content: Buffer.from(parsed.content, "base64"),
+  };
+}
+
 export function inlineFromDataUrl(value: string | undefined, contentId: string, filename: string): InlineImage | null {
   if (!value?.startsWith("data:")) return null;
   const parsed = parseDataUrl(value);

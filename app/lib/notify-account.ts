@@ -8,7 +8,9 @@ export async function notifyAccountEmail(input: Omit<AccountNotice, "brandName" 
   if (!to || !isValidEmail(to)) return;
   try {
     const brand = readBrand();
+    const mark = brand.logo || brand.nameImage;
     const brandNameImage = await prepareBrandHeaderImage(brand.nameImage, 360, "white");
+    const brandLogo = await prepareBrandHeaderImage(mark, 180, brand.logo ? "none" : "white");
     const response = await fetch("/api/notify-account", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -17,6 +19,7 @@ export async function notifyAccountEmail(input: Omit<AccountNotice, "brandName" 
         to,
         brandName: bankDisplayName(input.brandName || brand.name),
         brandNameImage,
+        brandLogo,
       }),
     });
     if (!response.ok) {

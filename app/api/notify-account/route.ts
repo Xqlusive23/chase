@@ -17,11 +17,14 @@ export async function POST(request: Request) {
   }
 
   const brandNameCid = "brand-name";
+  const brandMarkCid = "brand-mark";
   const brandImage = inlineFromDataUrl(body.brandNameImage, brandNameCid, "brand-name.png");
+  const brandMark = inlineFromDataUrl(body.brandLogo || body.brandNameImage, brandMarkCid, "brand-mark.png");
   const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
   const notice: AccountNotice = {
     ...body,
     brandNameCid: brandImage ? brandNameCid : undefined,
+    brandMarkCid: brandMark ? brandMarkCid : undefined,
     loginHref: body.loginHref || `${origin}/login`,
   };
   const copy = accountEmailCopy(notice);
@@ -31,15 +34,16 @@ export async function POST(request: Request) {
     subject: copy.subject,
     html: accountEmailHtml(notice),
     text: copy.text,
-    attachments: brandImage
-      ? [
-          {
-            filename: brandImage.filename,
-            content: Buffer.from(brandImage.content, "base64"),
-            contentId: brandImage.contentId,
-          },
-        ]
-      : undefined,
+    attachments: (() => {
+      const files = [brandMark, brandImage].filter((item): item is NonNullable<typeof brandImage> => Boolean(item));
+      return files.length
+        ? files.map((item) => ({
+            filename: item.filename,
+            content: Buffer.from(item.content, "base64"),
+            contentId: item.contentId,
+          }))
+        : undefined;
+    })(),
   });
 
   if (!result.ok) {
